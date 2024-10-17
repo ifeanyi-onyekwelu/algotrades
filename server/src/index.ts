@@ -32,7 +32,7 @@ app.use(
         secret: sessionSecret,
         resave: false,
         saveUninitialized: true,
-        cookie: { secure: false }, // Set secure to false for development on HTTP
+        cookie: { secure: true },
     })
 );
 

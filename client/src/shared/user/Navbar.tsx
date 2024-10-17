@@ -59,7 +59,7 @@ const UserNavbar = ({
                     </Dropdown.Header>
                     <Dropdown.Item
                         as={Link}
-                        to="/dashboard/settings"
+                        to="/dashboard/kyc"
                         className="gap-2"
                     >
                         <FaRegUserCircle />

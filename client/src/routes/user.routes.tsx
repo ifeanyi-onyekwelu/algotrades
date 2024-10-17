@@ -7,7 +7,6 @@ import AffiliatePage from "../features/user/pages/AffiliatePage.tsx";
 import ActivitiesPage from "../features/user/pages/ActivitiesPage.tsx";
 import ReinvestPage from "../features/user/pages/ReinvestPage.tsx";
 import TransferPage from "../features/user/pages/TransferPage.tsx";
-import EmailVerified from "../features/auth/pages/VerifyEmail.tsx";
 import KycPage from "../features/user/pages/KycPage.tsx";
 
 function UserRoutes() {
@@ -22,7 +21,6 @@ function UserRoutes() {
                 <Route path="reinvest" element={<ReinvestPage />} />
                 <Route path="transfer" element={<TransferPage />} />
                 <Route path="kyc" element={<KycPage />} />
-                <Route path="email-verified" element={<EmailVerified />} />
             </Route>
         </Routes>
     );

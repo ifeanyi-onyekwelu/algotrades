@@ -1,124 +1,89 @@
 import nodemailer from "nodemailer";
+import { MailtrapTransport } from "mailtrap";
+import {
+    generateDepositRequestEmail,
+    generateWithdrawalRequestEmail,
+    generateAdminDepositNotification,
+    generateAdminWithdrawalNotification,
+    generateDepositStatusEmail,
+    generateWithdrawalStatusEmail,
+    generateLoginEmail,
+    generateRegistrationEmail,
+    generatePasswordChangeNotification,
+    generatePasswordResetEmail,
+} from "./emailTemplates";
+
+const ADMIN_EMAIL = "admin@algotrades.io"; // Replace with actual admin email
 
 class EmailService {
     transporter: any;
 
     constructor() {
         this.transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 465,
+            host: "smtp.mailersend.net",
+            port: 587,
             auth: {
-                user: "admin@algotrades.io",
-                pass: "CE1f2b26-07Cd-4482-8392-4Cb5C0C6a0D3",
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS,
             },
         });
     }
 
-    async sendMail(to: string, subject: string, text: string) {
+    async sendMail(to: string, subject: string, html: string) {
         const mailOptions = {
-            from: `Admin admin@algotrades.io`,
+            from: '"Admin" <admin@algotrades.io>',
             to,
             subject,
-            text,
+            html,
         };
 
         try {
+            console.log("Sending email...");
             await this.transporter.sendMail(mailOptions);
-        } catch (error) {
+        } catch (error: any) {
             console.log(`Error sending mail: ${error}`);
         }
     }
 
     // When a user logs in
     async sendLoginNotification(user: any) {
-        const subject = "New Login Notification";
-        const text = `
-      Hello, ${user.username}!
-
-      We noticed a new login to your account.
-
-      If this wasn't you, please contact support immediately.
-
-      This is an automated message. Please do not reply.
-    `;
-        await this.sendMail(user.email, subject, text);
+        const template = generateLoginEmail(user.fullName);
+        await this.sendMail(user.email, "New Login Notification", template);
     }
 
     // When a user registers
-    async sendRegistrationConfirmation(user: any) {
-        const subject = "Welcome to Our Service!";
-        const text = `
-      Welcome, ${user.username}!
-
-      Thank you for registering with us.
-      You can now access your account and enjoy our services.
-
-      This is an automated message. Please do not reply.
-    `;
-        await this.sendMail(user.email, subject, text);
+    async sendRegistrationConfirmation(user: any, token: number) {
+        const template = generateRegistrationEmail(user.fullName, token);
+        await this.sendMail(
+            user.email,
+            "Welcome to Algotrades - Please Verify Your Email",
+            template
+        );
     }
 
     // When a user requests a deposit
     async sendDepositStatusUpdate(user: any, amount: number, status: string) {
-        const userSubject = `Your deposit has been ${status}`;
-        const userMessage = `
-      Hello, ${user.username}!
-
-      Your deposit of ${amount} has been ${status}.
-      Please check your account for more details.
-
-      This is an automated message. Please do not reply.
-    `;
-
-        const adminSubject = `Deposit ${status} notification for user ${user.username}`;
-        const adminMessage = `
-      Deposit ${status} Notification
-
-      User: ${user.username}
-      Amount: ${amount}
-      The deposit has been ${status}. Please review the transaction in the admin panel.
-
-      This is an automated message. Please do not reply.
-    `;
-
-        // Send the emails simultaneously
-        await Promise.all([
-            this.sendMail(user.email, userSubject, userMessage),
-            this.sendMail(
-                "epushisirohms@gmail.com",
-                adminSubject,
-                adminMessage
-            ),
-        ]);
+        const template = generateDepositStatusEmail(
+            user.fullName,
+            amount,
+            status
+        );
+        await this.sendMail(user.email, "Deposit Status Update", template);
     }
 
-    // When a user requests a withdrawal
+    // When a user requests a deposit
     async sendDepositRequest(user: any, amount: number) {
-        const subject = "Deposit Request Received";
-        const text = `
-      Withdrawal Request
-
-      Hello ${user.username},
-
-      Your request to deposit ${amount} USD has been received and is awaiting approval.
-
-      This is an automated message. Please do not reply.
-    `;
-        await this.sendMail(user.email, subject, text);
+        const template = generateDepositRequestEmail(user.fullName, amount);
+        await this.sendMail(user.email, "Deposit Request Received", template);
     }
 
     // Notify admin about the deposit request
     async notifyAdminAboutDeposit(user: any, amount: number) {
-        const subject = "New Deposit Request";
-        const text = `
-      New Deposit Request
-
-      ${user.username} has requested a deposit of ${amount} USD.
-      Please review and approve the deposit.
-
-      This is an automated message. Please do not reply.
-    `;
-        await this.sendMail("epushisirohms@gmail.com", subject, text);
+        const template = generateAdminDepositNotification(
+            user.fullName,
+            amount
+        );
+        await this.sendMail(ADMIN_EMAIL, "New Deposit Request", template); // Ensure to send to admin email
     }
 
     // When an admin approves the withdrawal
@@ -127,104 +92,47 @@ class EmailService {
         amount: number,
         status: string
     ) {
-        const subject = `Withdrawal Request ${
-            status === "approved" ? "Approved" : "Declined"
-        }`;
-        const userText = `
-      Withdrawal ${status === "approved" ? "Approved" : "Declined"}
-
-      Hello ${user.username},
-
-      Your withdrawal of ${amount} has been ${status}.
-      ${
-          status === "approved"
-              ? "Your funds will be credited to your account shortly."
-              : "Unfortunately, your request has been declined. Please contact support if you have questions."
-      }
-
-      This is an automated message. Please do not reply.
-    `;
-
-        const adminText = `
-      Withdrawal Request ${status === "approved" ? "Approved" : "Declined"}
-
-      The withdrawal of ${amount} for user ${user.username} (${
-            user.email
-        }) has been ${status}.
-      Status: ${status.toUpperCase()}
-
-      This is an automated message. Please do not reply.
-    `;
-
-        // Send email to the user
-        await this.sendMail(user.email, subject, userText);
-
-        // Send email to the admin (replace with your admin email)
-        const adminEmail = "epushisirohms@gmail.com"; // Update this to the actual admin email
-        await this.sendMail(adminEmail, subject, adminText);
+        const template = generateWithdrawalStatusEmail(
+            user.fullName,
+            amount,
+            status
+        );
+        await this.sendMail(user.email, "Withdrawal Status Update", template);
     }
 
     // When a user requests a withdrawal
     async sendWithdrawalRequest(user: any, amount: number) {
-        const subject = "Withdrawal Request Received";
-        const text = `
-      Withdrawal Request
-
-      Hello ${user.username},
-
-      Your request to withdraw ${amount} USD has been received and is awaiting approval.
-
-      This is an automated message. Please do not reply.
-    `;
-        await this.sendMail(user.email, subject, text);
+        const template = generateWithdrawalRequestEmail(user.fullName, amount);
+        await this.sendMail(
+            user.email,
+            "Withdrawal Request Received",
+            template
+        );
     }
 
     // Notify admin about the withdrawal request
     async notifyAdminAboutWithdrawal(user: any, amount: number) {
-        const subject = "New Withdrawal Request";
-        const text = `
-      New Withdrawal Request
-
-      ${user.username} has requested a withdrawal of ${amount} USD.
-      Please review and approve the withdrawal.
-
-      This is an automated message. Please do not reply.
-    `;
-        await this.sendMail("epushisirohms@gmail.com", subject, text);
+        const template = generateAdminWithdrawalNotification(
+            user.fullName,
+            amount
+        );
+        await this.sendMail(ADMIN_EMAIL, "New Withdrawal Request", template); // Ensure to send to admin email
     }
 
     // When a user changes their password
     async sendPasswordChangeNotification(user: any) {
-        const subject = "Password Changed Successfully";
-        const text = `
-      Password Changed
-
-      Hello ${user.username},
-
-      Your account password has been successfully changed.
-      If this wasn't you, please contact support immediately.
-
-      This is an automated message. Please do not reply.
-    `;
-        await this.sendMail(user.email, subject, text);
+        const template = generatePasswordChangeNotification(user.fullName);
+        await this.sendMail(
+            user.email,
+            "Password Change Notification",
+            template
+        );
     }
 
     // When a user requests a password reset
     async sendPasswordResetRequest(user: any, resetLink: string) {
-        const subject = "Password Reset Request";
-        const text = `
-      Password Reset Request
-
-      Hello ${user.username},
-
-      We received a request to reset your password. Click the link below to reset your password:
-      ${resetLink}
-
-      If you didn't request this, please ignore this email.
-
-      This is an automated message. Please do not reply.
-    `;
-        await this.sendMail(user.email, subject, text);
+        const template = generatePasswordResetEmail(user.fullName, resetLink);
+        await this.sendMail(user.email, "Password Reset Request", template);
     }
 }
 

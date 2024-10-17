@@ -39,7 +39,7 @@ const LoginForm = () => {
         e.preventDefault();
         try {
             const response = await login(formState).unwrap();
-            const { accessToken, role } = response;
+            const { accessToken, role, isVerified } = response;
 
             setSuccessMessage("Login successful");
             setStatusType("success");
@@ -51,7 +51,11 @@ const LoginForm = () => {
                 if (role === "admin") {
                     navigate("/admin");
                 } else if (role === "user") {
-                    navigate("/dashboard/me");
+                    if (isVerified) {
+                        navigate("/dashboard/me");
+                    } else {
+                        navigate("/auth/verify-email");
+                    }
                 } else {
                     navigate("/");
                 }

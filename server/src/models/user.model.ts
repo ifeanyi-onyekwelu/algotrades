@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import { number } from "joi";
 
 interface IUser {
     fullName: string;
@@ -23,7 +24,7 @@ interface IUser {
     lastLogin: string;
     refreshToken: string | null;
     passwordResetToken: string | null;
-    emailVerificationToken: string | null;
+    emailVerificationToken: number | null;
     passportNumber: string | null;
     contactAddress: string | null;
     isVerified: boolean;
@@ -97,7 +98,7 @@ const userSchema = new mongoose.Schema<IUser>(
             default: null,
         },
         emailVerificationToken: {
-            type: String,
+            type: Number,
             default: null,
         },
         isVerified: {

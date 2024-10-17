@@ -63,7 +63,7 @@ const RegisterForm = () => {
             const response = await register(formState).unwrap();
             const { accessToken } = response;
             dispatch(setCredentials({ accessToken }));
-            navigate("/dashboard/me");
+            navigate("/auth/verify-email");
 
             setSuccessMessage("Registration successful!");
             setStatusType("success");

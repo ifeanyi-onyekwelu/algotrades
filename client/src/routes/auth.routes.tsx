@@ -6,6 +6,7 @@ import ForgotPasswordPage from "../features/auth/pages/ForgotPasswordPage.tsx";
 import ResetPasswordPage from "../features/auth/pages/ResetPasswordPage.tsx";
 import AdminLogin from "../features/admin/pages/Login.tsx";
 import AdminRegister from "../features/admin/pages/Register.tsx";
+import VerifyEmail from "../features/auth/pages/VerifyEmail.tsx";
 
 function AuthRoutes() {
     return (
@@ -21,6 +22,7 @@ function AuthRoutes() {
 
                 <Route path="admin/login" element={<AdminLogin />} />
                 <Route path="admin/register" element={<AdminRegister />} />
+                <Route path="verify-email" element={<VerifyEmail />} />
             </Route>
         </Routes>
     );

@@ -1,7 +1,6 @@
 const allowedOrigins: string[] = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://invest.vercel.app",
+    "https://algotrades.io",
+    "https://www.algotrades.io",
 ];
 
 const corsOptions = {

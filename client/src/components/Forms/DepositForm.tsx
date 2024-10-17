@@ -19,8 +19,6 @@ import { LoadingBackdrop } from "../LoadingBackdrop.tsx";
 import FormSelect from "../common/FormSelect.tsx";
 import FormInput from "../common/FormInput.tsx";
 import { Box, Typography } from "@mui/material";
-import EthQrCode from "../../assets/images/ETHCode.jpeg";
-import USDTQrCode from "../../assets/images/USDTQrCode.jpeg";
 
 interface FormState {
     plan: string;
@@ -128,11 +126,13 @@ const DepositForm = () => {
     > = {
         BTC: {
             address: "0x3988461552b25b97536934F50f97942Ff8EF01A4",
-            qrCodeUrl: EthQrCode,
+            qrCodeUrl:
+                "https://res.cloudinary.com/dr2z4ackb/image/upload/v1729022325/p06dropgnzfk4kquirbq.jpg",
         },
         USDT: {
             address: "TFhrFMXEWCdS5hwmpHR8S8EuHbrDuqaGmC",
-            qrCodeUrl: USDTQrCode,
+            qrCodeUrl:
+                "https://res.cloudinary.com/dr2z4ackb/image/upload/v1729022325/ud4hhgmjtxvk8wmczn0e.jpg",
         },
     };
 

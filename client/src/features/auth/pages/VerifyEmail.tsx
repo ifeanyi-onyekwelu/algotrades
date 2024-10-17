@@ -1,26 +1,45 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Box, Paper, Typography } from "@mui/material";
+import VerifyEmailForm from "../../../components/Forms/VerifyEmailForm";
+import { Link } from "react-router-dom";
 
-const EmailVerified = () => {
-    const [message, setMessage] = useState("");
-    const location = useLocation();
-
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const status = params.get("status");
-
-        if (status === "success") {
-            setMessage("Email verified successfully!");
-        } else if (status === "error") {
-            setMessage("Email verification failed. Invalid or expired token.");
-        }
-    }, [location]);
-
+const VerifyEmail = () => {
     return (
-        <div className="flex items-center justify-center h-screen">
-            <h1>{message}</h1>
-        </div>
+        <Box
+            sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: "40px 20px",
+            }}
+        >
+            <Paper
+                elevation={1}
+                sx={{
+                    padding: "40px",
+                    width: "100%",
+                    maxWidth: "400px",
+                }}
+            >
+                <Typography
+                    variant="h4"
+                    textAlign="center"
+                    mb={2}
+                    fontWeight="bold"
+                >
+                    Welcome to{" "}
+                    <Link to="/" className="text-primary font-black">
+                        Algotrades
+                    </Link>
+                </Typography>
+
+                <Typography sx={{ textAlign: "center" }}>
+                    Enter the code that was sent to your mailbox
+                </Typography>
+
+                <VerifyEmailForm />
+            </Paper>
+        </Box>
     );
 };
 
-export default EmailVerified;
+export default VerifyEmail;

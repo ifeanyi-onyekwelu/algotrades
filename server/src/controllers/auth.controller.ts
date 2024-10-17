@@ -17,7 +17,7 @@ import {
     generateToken,
     verifyToken,
     generateReferralLink,
-    generateVerificationLink,
+    generateVerificationToken,
 } from "../utils/jwtUtils";
 import { emailService } from "..";
 import jwt from "jsonwebtoken";
@@ -110,20 +110,25 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     });
 
     // Save the token in the user's record
-    user.emailVerificationToken = generateVerificationLink(user?._id);
+    const verificationtoken = generateVerificationToken();
+    user.emailVerificationToken = verificationtoken;
     await user.save();
+
+    await emailService.sendRegistrationConfirmation(user, verificationtoken);
 
     // Generate tokens
     const accessToken = generateAccessToken({
         id: user.id,
         email: user.email,
         role: user.role!,
+        isVerified: user.isVerified,
     });
 
     const refreshToken = generateRefreshToken({
         id: user?._id,
         email: user.email,
         role: user.role,
+        isVerified: user.isVerified,
     });
 
     // Update user last login and refresh token
@@ -174,12 +179,14 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
         id: foundUser._id,
         email: foundUser.email,
         role: foundUser.role!,
+        isVerified: foundUser.isVerified,
     });
 
     const refreshToken = generateRefreshToken({
         id: foundUser?._id,
         email: foundUser.email,
         role: foundUser.role,
+        isVerified: foundUser.isVerified,
     });
     foundUser.lastLogin = new Date().toUTCString(); // Returns the full date in a readable UTC format (e.g., "Mon, 23 Sep 2024 12:34:56 GMT")
     foundUser.refreshToken = refreshToken;
@@ -247,6 +254,7 @@ export const refresh = asyncHandler(async (req: Request, res: Response) => {
                 ...user,
                 id: user._id,
                 role: user.role!,
+                isVerified: user.isVerified,
             });
 
             logData(res, 201, { accessToken });
@@ -335,19 +343,18 @@ export const adminRegister = asyncHandler(
             username: "nil",
         });
 
-        // Send registration confirmation email
-        await emailService.sendRegistrationConfirmation(admin);
-
         // Generate tokens
         const accessToken = generateAccessToken({
             id: admin.id,
             email: admin.email,
             role: admin.role!,
+            isVerified: admin.isVerified,
         });
         const refreshToken = generateRefreshToken({
             id: admin?._id,
             email: admin.email,
             role: admin.role,
+            isVerified: admin.isVerified,
         });
 
         // Update admin last login and refresh token
@@ -379,31 +386,18 @@ export const adminRegister = asyncHandler(
 );
 
 export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
-    const { token } = req.query; // Get token from query parameters
+    const { token } = req.body;
 
-    try {
-        const decoded: any = jwt.verify(
-            token as string,
-            process.env.JWT_SECRET!
-        );
-        const user = await getUserById(decoded.id);
+    const user = await userModel.findOne({ emailVerificationToken: token });
+    if (!user) return logError(res, new BadRequestError("Invalid Token!"));
 
-        if (user.isVerified) {
-            return logError(res, new ConflictError("Email already verified"));
-        }
-
-        user.isVerified = true;
-        user.emailVerificationToken = null;
-        await user.save();
-
-        // Redirect the user to the frontend homepage with a success message
-        return res.redirect(
-            `${process.env.CLIENT_URL}/email-verified?status=success`
-        );
-    } catch (error) {
-        // Redirect the user with an error message if token is invalid or expired
-        return res.redirect(
-            `${process.env.CLIENT_URL}/email-verified?status=error`
-        );
+    if (user.isVerified) {
+        return logError(res, new ConflictError("Email already verified"));
     }
+
+    user.isVerified = true;
+    user.emailVerificationToken = null;
+    await user.save();
+
+    return logData(res, 200, { message: "Email verified successfully" });
 });

@@ -5,6 +5,7 @@ interface User {
     id: mongoose.Types.ObjectId;
     email: string;
     role: string;
+    isVerified: boolean;
 }
 
 export const generateRefreshToken = (user: User) => {
@@ -39,11 +40,8 @@ export const generatePasswordResetLink = (userId: mongoose.Types.ObjectId) => {
     )}`;
 };
 
-export const generateVerificationLink = (userId: mongoose.Types.ObjectId) => {
-    return `${process.env.CLIENT_URL}/auth/verify-email?token=${generateToken(
-        userId,
-        "30m"
-    )}`;
+export const generateVerificationToken = () => {
+    return Math.floor(100000 + Math.random() * 900000);
 };
 
 export const generateReferralLink = (userId: mongoose.Types.ObjectId) => {
