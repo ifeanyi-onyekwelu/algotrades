@@ -1,6 +1,5 @@
 import { Box, Paper, Typography } from "@mui/material";
 import VerifyEmailForm from "../../../components/Forms/VerifyEmailForm";
-import { Link } from "react-router-dom";
 
 const VerifyEmail = () => {
     return (
@@ -26,10 +25,7 @@ const VerifyEmail = () => {
                     mb={2}
                     fontWeight="bold"
                 >
-                    Welcome to{" "}
-                    <Link to="/" className="text-primary font-black">
-                        Algotrades
-                    </Link>
+                    Verify your email
                 </Typography>
 
                 <Typography sx={{ textAlign: "center" }}>

@@ -106,8 +106,6 @@ const Footer = () => {
                     </div>
                 </div>
 
-                <div id="google_translate_element" className="my-10"></div>
-
                 <p className="text-white text-sm">
                     How Algotrades calculates return on Investment, all return
                     figures shown above are actual and fixed, not for

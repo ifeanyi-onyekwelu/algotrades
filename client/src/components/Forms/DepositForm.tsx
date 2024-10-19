@@ -127,7 +127,7 @@ const DepositForm = () => {
         BTC: {
             address: "0x3988461552b25b97536934F50f97942Ff8EF01A4",
             qrCodeUrl:
-                "https://res.cloudinary.com/dr2z4ackb/image/upload/v1729022325/p06dropgnzfk4kquirbq.jpg",
+                "https://res.cloudinary.com/dr2z4ackb/image/upload/v1729250031/q9whz7vpaqzxtopjciuo.jpg",
         },
         USDT: {
             address: "TFhrFMXEWCdS5hwmpHR8S8EuHbrDuqaGmC",

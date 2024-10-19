@@ -190,7 +190,18 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     });
     foundUser.lastLogin = new Date().toUTCString(); // Returns the full date in a readable UTC format (e.g., "Mon, 23 Sep 2024 12:34:56 GMT")
     foundUser.refreshToken = refreshToken;
-    foundUser.save();
+    await foundUser.save();
+
+    if (!foundUser.isVerified) {
+        const verificationtoken = generateVerificationToken();
+        foundUser.emailVerificationToken = verificationtoken;
+        await foundUser.save();
+
+        await emailService.sendRegistrationConfirmation(
+            foundUser,
+            verificationtoken
+        );
+    }
 
     req.session.user = {
         id: foundUser._id,
@@ -341,6 +352,7 @@ export const adminRegister = asyncHandler(
             role: "admin",
             phoneNumber: "nil",
             username: "nil",
+            isVerified: true,
         });
 
         // Generate tokens

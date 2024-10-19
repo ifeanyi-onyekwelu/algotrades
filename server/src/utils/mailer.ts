@@ -1,5 +1,5 @@
+import "dotenv/config";
 import nodemailer from "nodemailer";
-import { MailtrapTransport } from "mailtrap";
 import {
     generateDepositRequestEmail,
     generateWithdrawalRequestEmail,
@@ -13,45 +13,50 @@ import {
     generatePasswordResetEmail,
 } from "./emailTemplates";
 
-const ADMIN_EMAIL = "admin@algotrades.io"; // Replace with actual admin email
+const ADMIN_EMAIL = "Admin <admin@algotrades.io>"; // Replace with actual admin email
 
 class EmailService {
-    transporter: any;
+    transporter: nodemailer.Transporter;
 
     constructor() {
+        // Set up nodemailer transporter with Postmark SMTP settings
         this.transporter = nodemailer.createTransport({
-            host: "smtp.mailersend.net",
-            port: 587,
+            host: "smtp.hostinger.com",
+            port: 465,
+            secure: true,
             auth: {
-                user: process.env.MAIL_USER,
-                pass: process.env.MAIL_PASS,
+                user: "admin@algotrades.io",
+                pass: "Password7@algotrades.io",
             },
         });
     }
 
     async sendMail(to: string, subject: string, html: string) {
-        const mailOptions = {
-            from: '"Admin" <admin@algotrades.io>',
-            to,
-            subject,
-            html,
-        };
-
         try {
-            console.log("Sending email...");
-            await this.transporter.sendMail(mailOptions);
-        } catch (error: any) {
-            console.log(`Error sending mail: ${error}`);
+            console.log(`Sending email to: ${to} with subject: ${subject}`);
+            const response = await this.transporter.sendMail({
+                from: ADMIN_EMAIL,
+                to: to,
+                subject: subject,
+                html: html,
+                text: html.replace(/<[^>]*>/g, ""), // Optional: generate plain text from HTML
+                headers: {
+                    "X-PM-Message-Stream": "outbound", // Specify message stream
+                },
+            });
+            console.log("Email sent successfully:", response);
+        } catch (error) {
+            console.error(`Error sending mail: ${JSON.stringify(error)}`);
         }
     }
 
-    // When a user logs in
+    // User login notification
     async sendLoginNotification(user: any) {
         const template = generateLoginEmail(user.fullName);
         await this.sendMail(user.email, "New Login Notification", template);
     }
 
-    // When a user registers
+    // User registration confirmation
     async sendRegistrationConfirmation(user: any, token: number) {
         const template = generateRegistrationEmail(user.fullName, token);
         await this.sendMail(
@@ -61,7 +66,7 @@ class EmailService {
         );
     }
 
-    // When a user requests a deposit
+    // User deposit status update
     async sendDepositStatusUpdate(user: any, amount: number, status: string) {
         const template = generateDepositStatusEmail(
             user.fullName,
@@ -71,22 +76,22 @@ class EmailService {
         await this.sendMail(user.email, "Deposit Status Update", template);
     }
 
-    // When a user requests a deposit
+    // User deposit request
     async sendDepositRequest(user: any, amount: number) {
         const template = generateDepositRequestEmail(user.fullName, amount);
         await this.sendMail(user.email, "Deposit Request Received", template);
     }
 
-    // Notify admin about the deposit request
+    // Notify admin about deposit request
     async notifyAdminAboutDeposit(user: any, amount: number) {
         const template = generateAdminDepositNotification(
             user.fullName,
             amount
         );
-        await this.sendMail(ADMIN_EMAIL, "New Deposit Request", template); // Ensure to send to admin email
+        await this.sendMail(ADMIN_EMAIL, "New Deposit Request", template);
     }
 
-    // When an admin approves the withdrawal
+    // Withdrawal status update
     async sendWithdrawalStatusUpdate(
         user: any,
         amount: number,
@@ -100,7 +105,7 @@ class EmailService {
         await this.sendMail(user.email, "Withdrawal Status Update", template);
     }
 
-    // When a user requests a withdrawal
+    // Withdrawal request
     async sendWithdrawalRequest(user: any, amount: number) {
         const template = generateWithdrawalRequestEmail(user.fullName, amount);
         await this.sendMail(
@@ -110,16 +115,16 @@ class EmailService {
         );
     }
 
-    // Notify admin about the withdrawal request
+    // Notify admin about withdrawal request
     async notifyAdminAboutWithdrawal(user: any, amount: number) {
         const template = generateAdminWithdrawalNotification(
             user.fullName,
             amount
         );
-        await this.sendMail(ADMIN_EMAIL, "New Withdrawal Request", template); // Ensure to send to admin email
+        await this.sendMail(ADMIN_EMAIL, "New Withdrawal Request", template);
     }
 
-    // When a user changes their password
+    // Password change notification
     async sendPasswordChangeNotification(user: any) {
         const template = generatePasswordChangeNotification(user.fullName);
         await this.sendMail(
@@ -129,7 +134,7 @@ class EmailService {
         );
     }
 
-    // When a user requests a password reset
+    // Password reset request
     async sendPasswordResetRequest(user: any, resetLink: string) {
         const template = generatePasswordResetEmail(user.fullName, resetLink);
         await this.sendMail(user.email, "Password Reset Request", template);
