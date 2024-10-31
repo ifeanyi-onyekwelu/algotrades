@@ -12,6 +12,8 @@ import { logData, logError } from "./utils/logger";
 import { NotFoundError } from "./utils/errors";
 import corsOptions from "./config/corsOptions";
 
+import "./profitCronJob";
+
 export const emailService = new EmailService();
 
 config();

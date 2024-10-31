@@ -3,6 +3,7 @@ import { Table } from "flowbite-react";
 import { useHandleDepositMutation } from "../../../features/admin/api/adminApiSlice";
 import AlertMessage from "../../common/Snackbar";
 import { useState } from "react";
+import formatAmount from "../../../config/format";
 
 export function PendingDepositTable({ deposits }: any) {
     const [handleDeposit] = useHandleDepositMutation();
@@ -52,7 +53,9 @@ export function PendingDepositTable({ deposits }: any) {
                                     {deposit.cryptocurrency}
                                 </Table.Cell>
                                 <Table.Cell>{deposit.currency}</Table.Cell>
-                                <Table.Cell>{deposit.amount}</Table.Cell>
+                                <Table.Cell>
+                                    {formatAmount(deposit.amount)}
+                                </Table.Cell>
                                 <Table.Cell>{deposit.status}</Table.Cell>
                                 <Table.Cell>
                                     {new Date(

@@ -1,7 +1,7 @@
 import Breadcrumb from "../../components/Breadcrumb";
 import { Divider } from "@mui/material";
-import { MdLocationPin } from "react-icons/md";
 import { FaEnvelope } from "react-icons/fa";
+import { IoLogoWhatsapp } from "react-icons/io5";
 
 const ContactPage = () => {
     return (
@@ -24,19 +24,19 @@ const ContactPage = () => {
                         </p>
                         <Divider />
                         <div className="flex space-x-6 items-center">
-                            <MdLocationPin className="w-12 h-12 rounded-full bg-secondary text-lightGrey p-3" />
+                            <IoLogoWhatsapp className="w-12 h-12 rounded-full bg-secondary text-lightGrey p-3" />
                             <div className="flex flex-col ">
-                                <h4 className="text-semibold">Head Office</h4>
-                                <p>
-                                    5 Roman Way Hanham, Bristol, United Kingdom.
-                                </p>
+                                <h4 className="text-semibold">
+                                    Contact Number
+                                </h4>
+                                <p>+44 792 369 2232</p>
                             </div>
                         </div>
                         <div className="flex space-x-6 items-center">
                             <FaEnvelope className="w-12 h-12 rounded-full bg-secondary text-lightGrey p-3" />
                             <div className="flex flex-col">
                                 <h4 className="text-semibold">Email Us</h4>
-                                <p>support@Algotrades.io</p>
+                                <p>support@algotrades.io</p>
                             </div>
                         </div>
                     </div>

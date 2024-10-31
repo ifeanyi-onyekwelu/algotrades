@@ -26,17 +26,16 @@ export const verifyToken = (token: string, secretKey: string) => {
 
 export const generateToken = (
     userId: mongoose.Types.ObjectId,
-    expiresIn: any
+    expiresIn?: string | null // Make expiresIn optional
 ) => {
-    return jwt.sign({ id: userId }, process.env.JWT_SECRET!, {
-        expiresIn,
-    });
+    const options = expiresIn ? { expiresIn } : {}; // Set options based on expiresIn
+    return jwt.sign({ id: userId }, process.env.JWT_SECRET!, options);
 };
 
 export const generatePasswordResetLink = (userId: mongoose.Types.ObjectId) => {
     return `${process.env.CLIENT_URL}/auth/password-reset?token=${generateToken(
         userId,
-        "30m"
+        null // Pass null to create a token without expiration
     )}`;
 };
 

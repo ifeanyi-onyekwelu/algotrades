@@ -10,6 +10,7 @@ import {
     useGetTotalWithdrawalQuery,
     useGetAllPendingDepositsQuery,
 } from "../../features/admin/api/adminApiSlice";
+import formatAmount from "../../config/format";
 
 const StatsSection = () => {
     // Fetching the data from the corresponding API endpoints
@@ -44,7 +45,7 @@ const StatsSection = () => {
             <StatCard
                 icon={<PiHandDepositFill />}
                 title="Deposits ($)"
-                value={`$${totalDeposit.totalAmount || 0}`}
+                value={`$${formatAmount(totalDeposit.totalAmount) || 0}`}
             />
             <Divider
                 orientation="vertical"
@@ -55,7 +56,7 @@ const StatsSection = () => {
             <StatCard
                 icon={<PiHandWithdrawFill />}
                 title="Withdrawals ($)"
-                value={`$${totalWithdrawal.totalAmount || 0}`}
+                value={`$${formatAmount(totalWithdrawal.totalAmount) || 0}`}
             />
             <Divider
                 orientation="vertical"
@@ -66,7 +67,7 @@ const StatsSection = () => {
             <StatCard
                 icon={<MdOutlinePending />}
                 title="Pending"
-                value={`${pendingDeposits.deposits.length || 0}`}
+                value={`${formatAmount(pendingDeposits.deposits.length) || 0}`}
             />
         </div>
     );

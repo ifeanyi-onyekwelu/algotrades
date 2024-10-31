@@ -5,11 +5,14 @@ const adminApiSlice = baseApi.injectEndpoints({
         getAllUsers: builder.query({
             query: () => "admin/users",
         }),
+        getAllUserWallets: builder.query({
+            query: () => "admin/wallets",
+        }),
         updateUserProfit: builder.mutation({
-            query: ({ username, amount, operationType }) => ({
+            query: ({ username, amount, operationType, updateField }) => ({
                 url: `admin/update-profit/${username}`,
                 method: "PUT",
-                body: { amount, operationType }, // Assuming you're sending the amount to update
+                body: { amount, operationType, updateField }, // Assuming you're sending the amount to update
             }),
         }),
         deleteUser: builder.mutation({
@@ -28,6 +31,7 @@ const adminApiSlice = baseApi.injectEndpoints({
         }),
         getAllDeposits: builder.query({
             query: () => "admin/get-all-deposits",
+            providesTags: ["Deposit"],
         }),
         getAllPendingDeposits: builder.query({
             query: () => "admin/get-all-pending-deposits",
@@ -43,6 +47,7 @@ const adminApiSlice = baseApi.injectEndpoints({
                 url: `admin/handle-deposit/${depositId}/${status}`,
                 method: "PUT",
             }),
+            invalidatesTags: ["Deposit"],
         }),
 
         // Withdrawals
@@ -93,6 +98,7 @@ const adminApiSlice = baseApi.injectEndpoints({
 // Export the hooks for each endpoint
 export const {
     useGetAllUsersQuery,
+    useGetAllUserWalletsQuery,
     useUpdateUserProfitMutation,
     useDeleteUserMutation,
     useGetTotalUsersQuery,

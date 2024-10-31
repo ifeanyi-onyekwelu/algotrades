@@ -8,26 +8,34 @@ import AlertMessage from "../common/Snackbar.tsx";
 import { LoadingBackdrop } from "../LoadingBackdrop.tsx";
 import FormSelect from "../common/FormSelect.tsx";
 import FormInput from "../common/FormInput.tsx";
+import { useGetUserWalletQuery } from "../../features/user/api/userApiSlice.ts";
+import formatAmount from "../../config/format.ts";
 
 interface FormState {
     source: string;
     plan: string;
-    amount: string;
+    amount: number;
 }
 
 const ReinvestForm = () => {
     const [formState, setFormState] = useState<FormState>({
         source: "",
         plan: "",
-        amount: "",
+        amount: 0,
     });
     const [showAlert, setShowAlert] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [successMessage, setSuccessMessage] = useState<string>("");
     const [statusType, setStatusType] = useState<"error" | "success">("error");
     const [plansData, setPlansData] = useState<
-        { value: string; title: string; amount: string }[]
+        { value: string; title: string; amount: number }[]
     >([]);
+
+    const { data: walletData, isLoading: isWalletLoading } =
+        useGetUserWalletQuery({});
+
+    const wallet = walletData?.wallet;
+    console.log(wallet);
 
     const { data: plans = {} } = useGetAllUserPlansQuery({});
     const [reinvest, { isLoading: isReinvestLoading }] = useReinvestMutation();
@@ -36,7 +44,7 @@ const ReinvestForm = () => {
         // Populate plansData with initial investment amounts
         const formattedPlans = (plans.plans || []).map((plan: any) => ({
             value: plan._id,
-            title: `Invest $${plan.initialInvestment} Get $${plan.profit} (Duration ${plan.duration} ${plan.durationType})`,
+            title: `Invest $${formatAmount(plan.initialInvestment)} Get $${formatAmount(plan.profit)} (Duration ${plan.duration} ${plan.durationType})`,
             amount: plan.initialInvestment, // Add the initial investment amount
         }));
         setPlansData(formattedPlans);
@@ -55,7 +63,7 @@ const ReinvestForm = () => {
         } else {
             setFormState((prevState) => ({
                 ...prevState,
-                amount: "", // Reset amount if no plan is selected
+                amount: 0, // Reset amount if no plan is selected
             }));
         }
     }, [formState.plan, plansData]);
@@ -73,18 +81,22 @@ const ReinvestForm = () => {
     const handleOnSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await reinvest(formState).unwrap();
+            const response = await reinvest(formState).unwrap();
+            console.log(response);
             setSuccessMessage(
                 `You have successfully reinvested ${formState.amount}`,
             );
             setStatusType("success");
             setShowAlert(true);
-            setFormState({ source: "", plan: "", amount: "" });
+            setFormState({ source: "", plan: "", amount: 0 });
         } catch (error: any) {
+            console.log(error);
             setErrorMessage(error?.data?.message);
             setShowAlert(true);
         }
     };
+
+    if (isWalletLoading) return <p>Loading....</p>;
 
     return (
         <form
@@ -104,7 +116,11 @@ const ReinvestForm = () => {
                     menuItems={[
                         {
                             value: "balance",
-                            title: "Reinvest from my balance",
+                            title: `Reinvest from my balance ($${formatAmount(wallet?.balance)})`,
+                        },
+                        {
+                            value: "profit",
+                            title: `Reinvest from my profit ($${formatAmount(wallet?.profit)})`,
                         },
                     ]}
                 />
@@ -124,7 +140,7 @@ const ReinvestForm = () => {
                     id="amount"
                     label="Amount"
                     name="amount"
-                    value={formState.amount}
+                    value={`$${formatAmount(formState.amount)}`}
                     onChange={handleOnChange}
                 />
             </FormControl>

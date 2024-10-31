@@ -4,10 +4,11 @@ export interface IWallet {
     user?: {
         userId: mongoose.Types.ObjectId;
         fullName: string;
-        email: Date;
+        email: string;
     };
     balance: number;
     profit: number;
+    referralBonus: number; // New field for referral bonus
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -28,6 +29,11 @@ const walletSchema = new mongoose.Schema<IWallet>(
             default: 0.0,
         },
         profit: {
+            type: Number,
+            default: 0.0,
+        },
+        referralBonus: {
+            // Define referral bonus field
             type: Number,
             default: 0.0,
         },

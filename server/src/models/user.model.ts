@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import { number } from "joi";
 
 interface IUser {
     fullName: string;
@@ -13,6 +12,9 @@ interface IUser {
         planName: string;
         investmentDate: Date;
         endDate: Date;
+        simulatedDays: number;
+        initialInvestment: number;
+        profitAccumulated: number;
     };
     referrals?: [
         {
@@ -21,6 +23,7 @@ interface IUser {
             email: string;
         }
     ];
+    referredBy?: mongoose.Types.ObjectId; // New field for tracking who referred this user
     lastLogin: string;
     refreshToken: string | null;
     passwordResetToken: string | null;
@@ -36,29 +39,11 @@ interface IUser {
 
 const userSchema = new mongoose.Schema<IUser>(
     {
-        fullName: {
-            type: String,
-            required: [true, "Please enter your full name"],
-        },
-        username: {
-            type: String,
-            unique: true,
-            required: [true, "Please enter a username"],
-        },
-        phoneNumber: {
-            type: String,
-            unique: true,
-            required: [true, "Please specify a Phone number"],
-        },
-        email: {
-            type: String,
-            unique: true,
-            required: [true, "Please specify an Email address"],
-        },
-        password: {
-            type: String,
-            required: [true, "Please enter a password"],
-        },
+        fullName: { type: String, required: true },
+        username: { type: String, unique: true, required: true },
+        phoneNumber: { type: String, unique: true, required: true },
+        email: { type: String, unique: true, required: true },
+        password: { type: String, required: true },
         currentPlan: {
             planId: {
                 type: mongoose.Types.ObjectId,
@@ -66,8 +51,11 @@ const userSchema = new mongoose.Schema<IUser>(
                 default: null,
             },
             planName: { type: String, default: null },
-            investmentDate: { type: Date, default: null },
+            investmentDate: { type: Date, default: Date.now },
             endDate: { type: Date, default: null },
+            simulatedDays: { type: Number, default: 0 },
+            initialInvestment: { type: Number, default: 0 },
+            profitAccumulated: { type: Number, default: 0 },
         },
         referrals: [
             {
@@ -80,44 +68,22 @@ const userSchema = new mongoose.Schema<IUser>(
                 email: { type: String, default: null },
             },
         ],
-        lastLogin: {
-            type: String,
-        },
-        refreshToken: {
-            type: String,
-        },
-        passwordResetToken: {
-            type: String,
-        },
-        passportNumber: {
-            type: String,
+        referredBy: {
+            type: mongoose.Types.ObjectId,
+            ref: "User", // Refers to the user who referred this user
             default: null,
         },
-        contactAddress: {
-            type: String,
-            default: null,
-        },
-        emailVerificationToken: {
-            type: Number,
-            default: null,
-        },
-        isVerified: {
-            type: Boolean,
-            default: false,
-        },
-        referralLink: {
-            type: String,
-        },
-        createdAt: {
-            type: Date,
-            default: Date.now,
-        },
-        role: {
-            type: String,
-            enum: ["admin", "user"],
-            default: "user",
-        },
-        profilePicture: String,
+        lastLogin: { type: String },
+        refreshToken: { type: String },
+        passwordResetToken: { type: String },
+        passportNumber: { type: String, default: null },
+        contactAddress: { type: String, default: null },
+        emailVerificationToken: { type: Number, default: null },
+        isVerified: { type: Boolean, default: false },
+        referralLink: { type: String },
+        createdAt: { type: Date, default: Date.now },
+        role: { type: String, enum: ["admin", "user"], default: "user" },
+        profilePicture: { type: String },
     },
     {
         timestamps: true,

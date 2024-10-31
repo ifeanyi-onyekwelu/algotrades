@@ -10,6 +10,13 @@ export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
     return logData(res, 200, { users });
 });
 
+export const getAllUserWallets = asyncHandler(
+    async (req: Request, res: Response) => {
+        const wallets = await walletModel.find();
+        return logData(res, 200, { wallets });
+    }
+);
+
 export const getTotalNumberOfUsers = asyncHandler(
     async (req: Request, res: Response) => {
         const totalUsers = await userModel.countDocuments();
@@ -36,7 +43,12 @@ export const deleteUserByUserId = asyncHandler(
 export const updateUserProfit = asyncHandler(
     async (req: Request, res: Response) => {
         const username = req.params.username;
-        const { amount, operationType } = req.body;
+        const { amount, operationType, updateField } = req.body;
+        console.log(amount);
+        console.log(operationType);
+        console.log(updateField);
+
+        const amountConverted = parseFloat(amount);
 
         const user = await userModel.findOne({ username });
         if (!user) return logError(res, new NotFoundError("User not found"));
@@ -47,17 +59,29 @@ export const updateUserProfit = asyncHandler(
         if (!userWallet)
             return logError(res, new NotFoundError("User wallet not found"));
 
+        // Determine field to update based on `updateField` value
+        let targetField;
+        if (updateField === "profit") {
+            targetField = "profit";
+        } else if (updateField === "balance") {
+            targetField = "balance";
+        } else {
+            return logError(
+                res,
+                new BadRequestError("Invalid field to update")
+            );
+        }
+
         if (operationType === "add") {
-            userWallet.profit += amount;
+            userWallet[targetField] += amountConverted;
         } else if (operationType === "remove") {
-            if (userWallet.balance < amount) {
+            if (userWallet[targetField] < amountConverted) {
                 return logError(
                     res,
-                    new BadRequestError("Insufficient balance to remove profit")
+                    new BadRequestError(`Insufficient ${targetField} to remove`)
                 );
             }
-            // Deduct from the user's balance and add to profit
-            userWallet.balance -= amount;
+            userWallet[targetField] -= amountConverted;
         } else {
             return logError(res, new BadRequestError("Invalid operation type"));
         }
@@ -65,7 +89,7 @@ export const updateUserProfit = asyncHandler(
         await userWallet.save();
 
         return logData(res, 200, {
-            message: "User profit updated successfully",
+            message: `User ${targetField} updated successfully`,
             userWallet,
         });
     }

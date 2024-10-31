@@ -2,8 +2,13 @@ import { Box, Paper, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 // import { LoadingBackdrop } from "../../../components/LoadingBackdrop";
 import RegisterForm from "../../../components/Forms/RegisterForm";
+import { useLocation } from "react-router-dom";
 
 const RegisterPage = () => {
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const refToken = searchParams.get("ref");
+
     return (
         <Box
             sx={{
@@ -46,7 +51,7 @@ const RegisterPage = () => {
                     </Link>
                 </Typography>
 
-                <RegisterForm />
+                <RegisterForm refToken={refToken} />
             </Paper>
         </Box>
     );

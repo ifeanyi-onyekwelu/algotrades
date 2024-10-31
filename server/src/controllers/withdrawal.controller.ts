@@ -6,6 +6,12 @@ import { logData } from "../utils/logger";
 import { getUserById } from "../services/user.service";
 import walletModel from "../models/wallet.model";
 
+const formatSourceText = (source: string) => {
+    return source
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (str) => str.toUpperCase());
+};
+
 export const withdrawalHandler = asynchHandler(
     async (req: Request, res: Response) => {
         const withdrawObject = req.body;
@@ -25,6 +31,8 @@ export const withdrawalHandler = asynchHandler(
             availableFunds = wallet.balance;
         } else if (withdrawObject.source === "profit") {
             availableFunds = wallet.profit;
+        } else if (withdrawObject.source === "referralBonus") {
+            availableFunds = wallet.referralBonus;
         } else {
             return res
                 .status(400)
@@ -33,9 +41,11 @@ export const withdrawalHandler = asynchHandler(
 
         // Validate that the user has sufficient funds for the withdrawal
         if (availableFunds < withdrawalAmount) {
-            return res
-                .status(400)
-                .json({ message: "Insufficient funds for withdrawal" });
+            return res.status(400).json({
+                message: `Insufficient ${formatSourceText(
+                    withdrawObject.source
+                )} to withdraw`,
+            });
         }
 
         // Deduct the withdrawal amount from the appropriate source

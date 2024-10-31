@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/auth/slices/authSlice";
 import { AppDispatch } from "../../app/store";
-import Logo from "../../assets/images/logo.png";
+import { DarkThemeToggle } from "flowbite-react";
 
 import { FaRegUserCircle } from "react-icons/fa";
 import { MdHistory } from "react-icons/md";
@@ -37,18 +37,23 @@ const UserNavbar = ({
                 >
                     <FaBars />
                 </button>
-                <img src={Logo} alt="Logo" className="w-20 h-8 mt-2" />
+                <DarkThemeToggle />
             </Navbar.Brand>
             <div className="flex md:order-2">
                 <Dropdown
                     arrowIcon={false}
                     inline
                     label={
-                        <Avatar
-                            alt="User settings"
-                            img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                            rounded
-                        />
+                        <div className="flex gap-2 items-center">
+                            <Avatar
+                                alt="User settings"
+                                img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                                rounded
+                            />
+                            <span className="font-extrabold text-gray-600">
+                                {username}
+                            </span>
+                        </div>
                     }
                 >
                     <Dropdown.Header>

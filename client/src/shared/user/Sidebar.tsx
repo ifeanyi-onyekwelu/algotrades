@@ -12,9 +12,13 @@ import { HiUsers } from "react-icons/hi";
 import { BiTransfer } from "react-icons/bi";
 import { LuRefreshCcw } from "react-icons/lu";
 import { TiSpanner } from "react-icons/ti";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../../assets/images/logo.png";
-import { IoClose } from "react-icons/io5";
+import { IoClose, IoLogOut } from "react-icons/io5";
+import { logout } from "../../features/auth/slices/authSlice";
+
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../app/store";
 
 const UserSidebar = ({
     isOpen,
@@ -49,14 +53,23 @@ const UserSidebar = ({
         };
     }, [isOpen, toggleSidebar]);
 
+    const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        dispatch(logout());
+        navigate("/");
+    };
+
     return (
         <Sidebar
-            className={`bg-charcolGrey text-white fixed w-[64%] sm:w-[20%] h-full transition-transform transform ${
+            className={`sidebar-bg text-white fixed w-[64%] sm:w-[20%] h-full transition-transform transform ${
                 isOpen ? "translate-x-0" : "-translate-x-full"
             } sm:translate-x-0 sm:block z-50`}
         >
             {/* Sidebar Header */}
-            <div className="flex justify-between px-4 py-3 bg-lightGrey">
+            <div className="flex justify-between px-4 py-3">
                 <Sidebar.Logo
                     href="#"
                     img={Logo}
@@ -71,6 +84,10 @@ const UserSidebar = ({
             {/* Sidebar Links */}
             <Sidebar.Items>
                 <Sidebar.ItemGroup>
+                    <div className="px-2 py-2 text-sm font-semibold text-gray-400 uppercase">
+                        Member Account
+                    </div>
+
                     <Sidebar.Item
                         as={Link}
                         to="/dashboard/me"
@@ -83,9 +100,20 @@ const UserSidebar = ({
                     >
                         Dashboard
                     </Sidebar.Item>
-                </Sidebar.ItemGroup>
-                {/* Group: Dashboard and others */}
-                <Sidebar.ItemGroup>
+
+                    <Sidebar.Item
+                        as={Link}
+                        to="/dashboard/deposit"
+                        icon={FaCloudDownloadAlt}
+                        className={`${
+                            pathname === "/dashboard/deposit"
+                                ? "bg-emeraldGreen"
+                                : ""
+                        }`}
+                    >
+                        Deposit
+                    </Sidebar.Item>
+
                     <Sidebar.Item
                         as={Link}
                         to="/dashboard/affiliate"
@@ -98,6 +126,24 @@ const UserSidebar = ({
                     >
                         Affiliate
                     </Sidebar.Item>
+
+                    <div className="px-2 py-2 text-sm font-semibold text-gray-400 uppercase">
+                        Finance
+                    </div>
+
+                    <Sidebar.Item
+                        as={Link}
+                        to="/dashboard/reinvest"
+                        icon={LuRefreshCcw}
+                        className={`${
+                            pathname === "/dashboard/reinvest"
+                                ? "bg-emeraldGreen"
+                                : ""
+                        }`}
+                    >
+                        Reinvest
+                    </Sidebar.Item>
+
                     <Sidebar.Item
                         as={Link}
                         to="/dashboard/activities"
@@ -109,22 +155,6 @@ const UserSidebar = ({
                         }`}
                     >
                         Activities
-                    </Sidebar.Item>
-                </Sidebar.ItemGroup>
-
-                {/* Group: Transactions */}
-                <Sidebar.ItemGroup>
-                    <Sidebar.Item
-                        as={Link}
-                        to="/dashboard/deposit"
-                        icon={FaCloudDownloadAlt}
-                        className={`${
-                            pathname === "/dashboard/deposit"
-                                ? "bg-emeraldGreen"
-                                : ""
-                        }`}
-                    >
-                        Deposit
                     </Sidebar.Item>
                     <Sidebar.Item
                         as={Link}
@@ -138,18 +168,7 @@ const UserSidebar = ({
                     >
                         Withdraw
                     </Sidebar.Item>
-                    <Sidebar.Item
-                        as={Link}
-                        to="/dashboard/reinvest"
-                        icon={LuRefreshCcw}
-                        className={`${
-                            pathname === "/dashboard/reinvest"
-                                ? "bg-emeraldGreen"
-                                : ""
-                        }`}
-                    >
-                        Reinvest
-                    </Sidebar.Item>
+
                     <Sidebar.Item
                         as={Link}
                         to="/dashboard/transfer"
@@ -162,9 +181,11 @@ const UserSidebar = ({
                     >
                         Transfer
                     </Sidebar.Item>
-                </Sidebar.ItemGroup>
 
-                <Sidebar.ItemGroup>
+                    <div className="px-2 py-2 text-sm font-semibold text-gray-400 uppercase">
+                        Settings
+                    </div>
+
                     <Sidebar.Item
                         as={Link}
                         to="/dashboard/kyc"
@@ -176,6 +197,10 @@ const UserSidebar = ({
                         }`}
                     >
                         KYC
+                    </Sidebar.Item>
+
+                    <Sidebar.Item as={Link} to="#" icon={IoLogOut}>
+                        <button onClick={handleLogout}>Logout</button>
                     </Sidebar.Item>
                 </Sidebar.ItemGroup>
             </Sidebar.Items>

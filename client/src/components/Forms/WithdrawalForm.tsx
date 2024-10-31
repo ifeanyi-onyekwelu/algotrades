@@ -1,10 +1,14 @@
 import React, { ChangeEvent, useState } from "react";
-import { useHandleUserWithdrawalMutation } from "../../features/user/api/userApiSlice";
+import {
+    useHandleUserWithdrawalMutation,
+    useGetUserWalletQuery,
+} from "../../features/user/api/userApiSlice";
 import { Button, FormControl, SelectChangeEvent } from "@mui/material";
 import AlertMessage from "../common/Snackbar.tsx";
 import { LoadingBackdrop } from "../LoadingBackdrop.tsx";
 import FormSelect from "../common/FormSelect.tsx";
 import FormInput from "../common/FormInput.tsx";
+import formatAmount from "../../config/format.ts";
 
 interface FormState {
     currency: string;
@@ -22,6 +26,14 @@ const WithdrawalForm = () => {
     const [successMessage, __] = useState<string>("");
     const [statusType, _] = useState<"error" | "success">("error");
     const [showAlert, setShowAlert] = useState<boolean>(false);
+
+    const { data: walletData, isLoading: isWalletLoading } =
+        useGetUserWalletQuery({});
+
+    if (isWalletLoading) return <p>Loading...</p>;
+
+    const wallet = walletData?.wallet;
+    console.log(wallet);
 
     const [withdraw, { isLoading }] = useHandleUserWithdrawalMutation();
 
@@ -83,8 +95,18 @@ const WithdrawalForm = () => {
                     value={formState.source}
                     handleOnChange={handleOnChange}
                     menuItems={[
-                        { value: "balance", title: "Withdraw from balance" },
-                        { value: "profit", title: "Withdraw from profit" },
+                        {
+                            value: "balance",
+                            title: `Withdraw from balance ($${formatAmount(wallet.balance)})`,
+                        },
+                        {
+                            value: "profit",
+                            title: `Withdraw from profit ($${formatAmount(wallet.profit)})`,
+                        },
+                        {
+                            value: "referralBonus",
+                            title: `Withdraw from referral bonus ($${formatAmount(wallet.referralBonus)})`,
+                        },
                     ]}
                 />
             </FormControl>

@@ -16,6 +16,9 @@ export function Component({ isOpen, setIsOpen }: any) {
     const [username, setUsername] = useState("");
     const [amount, setAmount] = useState("");
     const [operationType, setOperationType] = useState<"add" | "remove">("add");
+    const [updateField, setUpdateField] = useState<"balance" | "profit">(
+        "profit",
+    );
 
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [successMessage, setSuccessMessage] = useState<string>("");
@@ -26,32 +29,40 @@ export function Component({ isOpen, setIsOpen }: any) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log(updateField);
 
         try {
-            await updateUserProfit({
+            const response = await updateUserProfit({
                 username,
                 amount,
                 operationType,
+                updateField,
             });
 
+            console.log(response);
             setSuccessMessage(
-                `${username} profit ${operationType === "add" ? "added" : "removed"} successfully!`,
+                `${updateField.charAt(0).toUpperCase() + updateField.slice(1)} ${operationType === "add" ? "added" : "removed"} successfully for ${username}!`,
             );
             setStatusType("success");
             setShowAlert(true);
             setUsername("");
             setAmount("");
             setOperationType("add");
+            setUpdateField("profit");
         } catch (error: any) {
+            console.log(error);
             setErrorMessage(error);
             setStatusType("error");
-            console.error("Failed to update profit:", error);
+            console.error("Failed to update:", error);
         }
     };
 
     return (
         <Drawer open={isOpen} onClose={handleClose} className="z-50">
-            <Drawer.Header title="UPDATE USER PROFIT" titleIcon={GiProfit} />
+            <Drawer.Header
+                title="UPDATE USER BALANCE OR PROFIT"
+                titleIcon={GiProfit}
+            />
             <Drawer.Items>
                 <form onSubmit={handleSubmit}>
                     {/* Username Input */}
@@ -87,6 +98,39 @@ export function Component({ isOpen, setIsOpen }: any) {
                         </FormControl>
                     </div>
 
+                    {/* Field Type Selection */}
+                    <div className="mb-6">
+                        <FormControl component="fieldset">
+                            <div className="flex items-center">
+                                <label className="mr-4">
+                                    <input
+                                        type="radio"
+                                        value="profit"
+                                        name="updateField"
+                                        checked={updateField === "profit"}
+                                        onChange={() =>
+                                            setUpdateField("profit")
+                                        }
+                                    />
+                                    Update Profit
+                                </label>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        value="balance"
+                                        name="updateField"
+                                        checked={updateField === "balance"}
+                                        onChange={() => {
+                                            setUpdateField("balance");
+                                            console.log(updateField);
+                                        }}
+                                    />
+                                    Update Balance
+                                </label>
+                            </div>
+                        </FormControl>
+                    </div>
+
                     {/* Operation Type Selection */}
                     <div className="mb-6">
                         <FormControl component="fieldset">
@@ -98,7 +142,7 @@ export function Component({ isOpen, setIsOpen }: any) {
                                         checked={operationType === "add"}
                                         onChange={() => setOperationType("add")}
                                     />
-                                    Add Profit
+                                    Add
                                 </label>
                                 <label>
                                     <input
@@ -109,7 +153,7 @@ export function Component({ isOpen, setIsOpen }: any) {
                                             setOperationType("remove")
                                         }
                                     />
-                                    Remove Profit
+                                    Remove
                                 </label>
                             </div>
                         </FormControl>
@@ -122,7 +166,7 @@ export function Component({ isOpen, setIsOpen }: any) {
                             className="w-full"
                             disabled={isLoading}
                         >
-                            {isLoading ? "Updating..." : "Update Profit"}
+                            {isLoading ? "Updating..." : "Update"}
                         </Button>
                     </div>
                 </form>

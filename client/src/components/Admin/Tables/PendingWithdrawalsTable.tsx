@@ -3,6 +3,7 @@ import { useHandleWithdrawalMutation } from "../../../features/admin/api/adminAp
 import { Dropdown } from "flowbite-react";
 import AlertMessage from "../../common/Snackbar";
 import { useState } from "react";
+import formatAmount from "../../../config/format";
 
 export function PendingWithdrawalTable({ withdrawals }: any) {
     const [handleWithdrawal] = useHandleWithdrawalMutation();
@@ -53,7 +54,9 @@ export function PendingWithdrawalTable({ withdrawals }: any) {
                                         "Unknown User"}
                                 </Table.Cell>
                                 <Table.Cell>{withdrawal.currency}</Table.Cell>
-                                <Table.Cell>{withdrawal.amount}</Table.Cell>
+                                <Table.Cell>
+                                    {formatAmount(withdrawal.amount)}
+                                </Table.Cell>
                                 <Table.Cell>{withdrawal.status}</Table.Cell>
                                 <Table.Cell>
                                     {withdrawal.profitOrBalance}

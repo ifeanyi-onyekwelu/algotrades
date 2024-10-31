@@ -1,8 +1,14 @@
 import {
+    deleteInvestment,
+    getAllInvestments,
+    getInvestmentById,
+} from "../controllers/admin.investment.controller";
+import {
     getAllUsers,
     updateUserProfit,
     getTotalNumberOfUsers,
     deleteUserByUserId,
+    getAllUserWallets,
 } from "../controllers/admin.controller";
 
 import {
@@ -33,6 +39,7 @@ import { Router } from "express";
 const router = Router();
 
 router.get("/users", getAllUsers);
+router.get("/wallets", getAllUserWallets);
 router.put("/update-profit/:username", updateUserProfit);
 router.get("/total-users", getTotalNumberOfUsers);
 router.delete("/users/:userId", deleteUserByUserId);
@@ -55,5 +62,9 @@ router.get("/get-all-pending-withdrawals", fetchAllPendingWithdrawals);
 router.get("/get-all-approved-withdrawals", fetchAllApprovedWithdrawals);
 router.get("/get-all-rejected-withdrawals", fetchAllRejectedWithdrawals);
 router.get("/total-withdrawal", getTotalWithdrawal);
+
+router.get("/get-all-investment", getAllInvestments);
+router.get("/investments/:id", getInvestmentById);
+router.delete("/investments/:id", deleteInvestment);
 
 export default router;

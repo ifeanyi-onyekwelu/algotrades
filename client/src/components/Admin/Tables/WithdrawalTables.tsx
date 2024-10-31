@@ -1,4 +1,5 @@
 import { Table } from "flowbite-react";
+import formatAmount from "../../../config/format";
 
 export function AllWithdrawalTable({ withdrawals }: any) {
     return (
@@ -24,7 +25,9 @@ export function AllWithdrawalTable({ withdrawals }: any) {
                                         "Unknown User"}
                                 </Table.Cell>
                                 <Table.Cell>{withdrawal.currency}</Table.Cell>
-                                <Table.Cell>{withdrawal.amount}</Table.Cell>
+                                <Table.Cell>
+                                    {formatAmount(withdrawal.amount)}
+                                </Table.Cell>
                                 <Table.Cell>{withdrawal.status}</Table.Cell>
                                 <Table.Cell>
                                     {withdrawal.profitOrBalance}

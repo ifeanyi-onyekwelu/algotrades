@@ -1,4 +1,6 @@
+import TradingViewWidget from "../../../components/common/TradingViewWidget";
 import CardList from "../../../components/Dashboard/user/CardList";
+import CurrentInvestmentPlan from "../../../components/Dashboard/user/CurrentInvestmentPlan";
 import DashboardHeader from "../../../components/Dashboard/user/DashboardHeader";
 import ReferralLink from "../../../components/Dashboard/user/ReferralLink";
 import {
@@ -85,11 +87,18 @@ const DashboardPage = () => {
 
     return (
         <div className="md:p-3">
+            <TradingViewWidget />
             <DashboardHeader username={userProfileData.user.username} />
             <CardList
                 balance={walletData.wallet.balance}
                 deposit={totalDeposit.totalAmount}
                 withdrawal={totalWithdrawal.totalAmount}
+                profit={walletData.wallet.profit}
+                referralBonus={walletData.wallet.referralBonus}
+            />
+
+            <CurrentInvestmentPlan
+                investmentPlan={userProfileData?.user?.currentPlan}
                 profit={walletData.wallet.profit}
             />
             <ReferralLink link={userProfileData.user.referralLink} />

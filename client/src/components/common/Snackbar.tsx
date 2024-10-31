@@ -41,12 +41,8 @@ const AlertMessage = ({
                     severity={statusType} // "error" or "success" sets the color
                     sx={{
                         width: "100%",
-                        bgcolor:
-                            statusType === "error"
-                                ? "error.main"
-                                : "success.main",
-                        color: "white",
                     }}
+                    variant="filled"
                 >
                     {message}
                 </Alert>

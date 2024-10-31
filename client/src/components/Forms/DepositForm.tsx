@@ -19,12 +19,13 @@ import { LoadingBackdrop } from "../LoadingBackdrop.tsx";
 import FormSelect from "../common/FormSelect.tsx";
 import FormInput from "../common/FormInput.tsx";
 import { Box, Typography } from "@mui/material";
+import formatAmount from "../../config/format.ts";
 
 interface FormState {
     plan: string;
     currency: string;
     cryptocurrency: string;
-    amount: string;
+    amount: number;
 }
 
 const DepositForm = () => {
@@ -32,7 +33,7 @@ const DepositForm = () => {
         plan: "",
         currency: "",
         cryptocurrency: "",
-        amount: "",
+        amount: 0,
     });
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [successMessage, setSuccessMessage] = useState<string>("");
@@ -47,7 +48,7 @@ const DepositForm = () => {
 
     const plansData = (plans.plans || []).map((plan: any) => ({
         value: plan._id,
-        title: `Invest $${plan.initialInvestment} Get $${plan.profit} (Duration ${plan.duration} ${plan.durationType})`,
+        title: `Invest $${formatAmount(plan.initialInvestment)} Get $${formatAmount(plan.profit)} (Duration ${plan.duration} ${plan.durationType})`,
         amount: plan.initialInvestment, // Add the initial investment amount
     }));
 
@@ -125,14 +126,14 @@ const DepositForm = () => {
         { address: string; qrCodeUrl: string }
     > = {
         BTC: {
-            address: "0x3988461552b25b97536934F50f97942Ff8EF01A4",
+            address: "bc1qgyjr8s3puulwhu6ax4y0drqhq3wfhfxnp9cue9",
             qrCodeUrl:
-                "https://res.cloudinary.com/dr2z4ackb/image/upload/v1729250031/q9whz7vpaqzxtopjciuo.jpg",
+                "https://res.cloudinary.com/dr2z4ackb/image/upload/v1729540546/wda6dfjo4nqqkmpomtfr.jpg",
         },
         USDT: {
-            address: "TFhrFMXEWCdS5hwmpHR8S8EuHbrDuqaGmC",
+            address: "TW2wmMd9idtsyvLNfjeo12sy6tXqRVJimt",
             qrCodeUrl:
-                "https://res.cloudinary.com/dr2z4ackb/image/upload/v1729022325/ud4hhgmjtxvk8wmczn0e.jpg",
+                "https://res.cloudinary.com/dr2z4ackb/image/upload/v1729540546/cmjualc3f6hefd5ubwev.jpg",
         },
     };
 
@@ -176,7 +177,7 @@ const DepositForm = () => {
                     id="amount"
                     label="Amount"
                     name="amount"
-                    value={formState.amount}
+                    value={`$${formatAmount(formState.amount)}`}
                     onChange={handleOnChange}
                 />
             </FormControl>

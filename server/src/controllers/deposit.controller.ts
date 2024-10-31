@@ -7,13 +7,13 @@ import { getUserById } from "../services/user.service";
 import planModel from "../models/plan.model";
 import { BadRequestError } from "../utils/errors";
 import walletModel from "../models/wallet.model";
+import investmentModel from "../models/investment.model";
 
 export const depositHandler = asynchHandler(
     async (req: Request, res: Response) => {
         const depositData = req.body;
 
         const user = await getUserById(req.session.user.id);
-
         const selectedPlan = await planModel.findById(depositData.plan);
 
         if (!selectedPlan) {
@@ -29,6 +29,7 @@ export const depositHandler = asynchHandler(
             );
         }
 
+        // Create a new deposit entry
         const deposit = await depositModel.create({
             user: user?._id,
             plan: selectedPlan._id,
@@ -37,21 +38,29 @@ export const depositHandler = asynchHandler(
             currency: depositData.currency,
         });
 
+        // Calculate the investment end date
+        const investmentStartDate = new Date();
+        investmentStartDate.setDate(investmentStartDate.getDate());
         const investmentEndDate = new Date();
         investmentEndDate.setDate(
             investmentEndDate.getDate() + selectedPlan.duration
         );
 
-        if (user) {
-            user.currentPlan = {
+        // Create a new investment entry
+        const investment = await investmentModel.create({
+            user: user?._id,
+            plan: {
                 planId: selectedPlan._id,
                 planName: selectedPlan.name,
-                investmentDate: new Date(),
-                endDate: investmentEndDate,
-            };
-        }
-
-        await user?.save();
+            },
+            amount: depositData.amount,
+            startDate: investmentStartDate,
+            endDate: investmentEndDate,
+            isReinvestment: false,
+            status: "active",
+            profitAccumulated: 0,
+        });
+        console.log(investment);
 
         if (deposit) {
             await Promise.all([
@@ -63,14 +72,13 @@ export const depositHandler = asynchHandler(
             ]);
         }
 
-        return logData(res, 201, { deposit });
+        return logData(res, 201, { deposit, investment });
     }
 );
 
 export const reinvestHandler = asynchHandler(
     async (req: Request, res: Response) => {
-        const reinvestData = req.body;
-
+        const { amount, plan, source } = req.body;
         const user = await getUserById(req.session.user.id);
         const wallet = await walletModel.findOne({ "user.userId": user?._id });
 
@@ -78,13 +86,13 @@ export const reinvestHandler = asynchHandler(
             return logError(res, new BadRequestError("No wallet found"));
         }
 
-        const selectedPlan = await planModel.findById(reinvestData.plan);
+        const selectedPlan = await planModel.findById(plan);
 
         if (!selectedPlan) {
             return logError(res, new BadRequestError("Invalid plan selected"));
         }
 
-        if (reinvestData.amount < selectedPlan.initialInvestment) {
+        if (amount < selectedPlan.initialInvestment) {
             return logError(
                 res,
                 new BadRequestError(
@@ -93,58 +101,90 @@ export const reinvestHandler = asynchHandler(
             );
         }
 
-        if (reinvestData.amount > wallet.balance) {
+        // Check the source of funds and deduct from the appropriate wallet field
+        if (source === "balance" && amount > wallet.balance) {
             return logError(
                 res,
-                new BadRequestError(
-                    "Insufficient wallet balance for reinvestment"
-                )
+                new BadRequestError("Insufficient balance for reinvestment")
+            );
+        }
+        if (source === "profit" && amount > wallet.profit) {
+            return logError(
+                res,
+                new BadRequestError("Insufficient profit for reinvestment")
             );
         }
 
-        // Create a new deposit for reinvestment
-        const deposit = await depositModel.create({
-            user: user?._id,
-            plan: selectedPlan._id,
-            amount: reinvestData.amount,
-            cryptocurrency: "BTC", // Set default or adjust based on your logic
-            currency: "USD", // Set default or adjust based on your logic
-            isReinvestment: true, // Mark as reinvestment
-        });
-
-        // Update the wallet by deducting the reinvested amount
-        wallet.balance -= reinvestData.amount;
+        // Deduct the amount from the specified source
+        if (source === "balance") {
+            wallet.balance -= amount;
+        } else if (source === "profit") {
+            wallet.profit -= amount;
+        } else {
+            return logError(
+                res,
+                new BadRequestError("Invalid source specified")
+            );
+        }
         await wallet.save();
 
+        const investmentStartDate = new Date();
+        investmentStartDate.setDate(investmentStartDate.getDate());
         // Calculate the new investment end date
         const investmentEndDate = new Date();
         investmentEndDate.setDate(
             investmentEndDate.getDate() + selectedPlan.duration
         );
 
+        // Create a new investment entry
+        const investment = await investmentModel.create({
+            user: user?._id,
+            plan: {
+                planId: selectedPlan._id,
+                planName: selectedPlan.name,
+            },
+            amount,
+            startDate: investmentStartDate,
+            endDate: investmentEndDate,
+            isReinvestment: true,
+            status: "active",
+            profitAccumulated: 0,
+        });
+
         // Update user's current plan
         if (user) {
             user.currentPlan = {
                 planId: selectedPlan._id,
                 planName: selectedPlan.name,
-                investmentDate: new Date(),
+                investmentDate: investmentStartDate,
                 endDate: investmentEndDate,
+                initialInvestment: amount,
             };
+            await user.save();
         }
 
-        await user?.save();
+        // Find referrer and give 10% of the reinvestment amount as a reward
+        if (user.referredBy) {
+            const referrerWallet = await walletModel.findOne({
+                "user.userId": user.referredBy,
+            });
+            if (referrerWallet) {
+                referrerWallet.profit += amount * 0.1; // 10% of the reinvestment
+                await referrerWallet.save();
+            }
+        }
 
-        if (deposit) {
+        if (investment) {
             await Promise.all([
-                emailService.sendDepositRequest(user, reinvestData.amount),
-                emailService.notifyAdminAboutWithdrawal(
-                    user,
-                    reinvestData.amount
-                ),
+                emailService.sendDepositRequest(user, amount),
+                emailService.notifyAdminAboutWithdrawal(user, amount),
             ]);
         }
 
-        return logData(res, 201, { deposit });
+        return logData(res, 201, {
+            message: "Reinvestment successful",
+            investment,
+        });
     }
 );
 

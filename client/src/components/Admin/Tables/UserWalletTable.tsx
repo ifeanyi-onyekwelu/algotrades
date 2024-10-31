@@ -1,40 +1,38 @@
 import { Table } from "flowbite-react";
 import formatAmount from "../../../config/format";
 
-export function AllDepositTable({ deposits }: any) {
+export function AllUserWalletTable({ wallets }: any) {
     return (
         <div className="overflow-x-auto">
-            {deposits.length ? (
+            {wallets.length ? (
                 <Table hoverable>
                     <Table.Head>
                         <Table.HeadCell>Username</Table.HeadCell>
-                        <Table.HeadCell>Cryptocurrency</Table.HeadCell>
-                        <Table.HeadCell>Currency</Table.HeadCell>
-                        <Table.HeadCell>Amount ($)</Table.HeadCell>
-                        <Table.HeadCell>Status</Table.HeadCell>
-                        <Table.HeadCell>Date</Table.HeadCell>
+                        <Table.HeadCell>Email Address</Table.HeadCell>
+                        <Table.HeadCell>Balance</Table.HeadCell>
+                        <Table.HeadCell>Profit</Table.HeadCell>
+                        <Table.HeadCell>Referral Bonus</Table.HeadCell>
                     </Table.Head>
                     <Table.Body className="divide-y">
-                        {deposits?.map((deposit: any) => (
+                        {wallets?.map((wallet: any) => (
                             <Table.Row
-                                key={deposit._id}
+                                key={wallet._id}
                                 className="bg-white dark:border-gray-700 dark:bg-gray-800"
                             >
                                 <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                    {deposit.user?.username ?? "Unknown User"}
+                                    {wallet.user?.fullName ?? "Unknown User"}
+                                </Table.Cell>
+                                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                    {wallet.user?.email ?? "Unknown User"}
                                 </Table.Cell>
                                 <Table.Cell>
-                                    {deposit.cryptocurrency}
+                                    ${formatAmount(wallet.balance)}
                                 </Table.Cell>
-                                <Table.Cell>{deposit.currency}</Table.Cell>
                                 <Table.Cell>
-                                    {formatAmount(deposit.amount)}
+                                    ${formatAmount(wallet.profit)}
                                 </Table.Cell>
-                                <Table.Cell>{deposit.status}</Table.Cell>
                                 <Table.Cell>
-                                    {new Date(
-                                        deposit.createdAt,
-                                    ).toLocaleDateString()}
+                                    ${formatAmount(wallet.referralBonus)}
                                 </Table.Cell>
                             </Table.Row>
                         ))}

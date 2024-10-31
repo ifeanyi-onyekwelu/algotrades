@@ -9,7 +9,7 @@ import { AppDispatch } from "../../app/store.ts";
 import { setCredentials } from "../../features/auth/slices/authSlice.ts";
 import FormInput from "../common/FormInput.tsx";
 
-const RegisterForm = () => {
+const RegisterForm = ({ refToken }: any) => {
     const [formState, setFormState] = useState({
         fullName: "",
         username: "",
@@ -60,7 +60,10 @@ const RegisterForm = () => {
             return;
         }
         try {
-            const response = await register(formState).unwrap();
+            const response = await register({
+                ...formState,
+                referralToken: refToken,
+            }).unwrap();
             const { accessToken } = response;
             dispatch(setCredentials({ accessToken }));
             navigate("/auth/verify-email");
@@ -77,10 +80,8 @@ const RegisterForm = () => {
                 confirmPassword: "",
             });
         } catch (error: any) {
-            if (error?.status === "PARSING_ERROR")
-                setErrorMessage(
-                    "Password must be at least 8 characters long and contain at least one number and one special character.",
-                );
+            if (error?.status === 400)
+                setErrorMessage(error.data.errors[0].message);
             else if (error?.status === "FETCH_ERROR")
                 setErrorMessage("No server responded!");
             else setErrorMessage(error?.data?.message);

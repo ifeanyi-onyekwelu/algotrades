@@ -2,7 +2,8 @@ import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query/react";
 import { setCredentials } from "../../features/auth/slices/authSlice";
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: "https://api.algotrades.io/api/v1/",
+    // baseUrl: "https://api.algotrades.io/api/v1/",
+    baseUrl: "http://localhost:3333/api/v1/",
     credentials: "include",
     prepareHeaders: (headers, _: any) => {
         const token = localStorage.getItem("token");
@@ -45,6 +46,7 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
 // Base API setup
 const baseApi = createApi({
     baseQuery: baseQueryWithReauth,
+    tagTypes: ["User", "Deposit", "Withdrawal", "Plan", "Profile"], // Define your tags here
     endpoints: () => ({}),
 });
 

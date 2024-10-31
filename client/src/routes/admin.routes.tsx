@@ -11,12 +11,14 @@ import ApprovedWithdrawals from "../features/admin/pages/Withdrawals/ApprovedWit
 import DeclinedWithdrawals from "../features/admin/pages/Withdrawals/DeclinedWithdrawals.tsx";
 import Plans from "../features/admin/pages/Plans.tsx";
 import AdminProfile from "../features/admin/pages/Profile.tsx";
+import AllUserWallets from "../features/admin/pages/wallets.tsx";
 
 function AdminRoutes() {
     return (
         <Routes>
             <Route element={<AdminLayout />}>
                 <Route path="" element={<Users />} />
+                <Route path="/wallets" element={<AllUserWallets />} />
                 <Route path="/deposits/all" element={<AllDeposits />} />
                 <Route
                     path="/deposits/approved"

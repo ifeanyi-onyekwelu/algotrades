@@ -1,30 +1,42 @@
 // CardList.js
 import DashboardCard from "./Card";
-import { GiWallet, GiProfit } from "react-icons/gi";
+import { GiWallet, GiProfit, GiPerson } from "react-icons/gi";
 import { BsFillCloudDownloadFill, BsCloudUploadFill } from "react-icons/bs";
+import formatAmount from "../../../config/format";
 
-const CardList = ({ balance, deposit, withdrawal, profit }: any) => {
+const CardList = ({
+    balance,
+    deposit,
+    withdrawal,
+    profit,
+    referralBonus,
+}: any) => {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 w-full p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 w-full py-4">
             <DashboardCard
                 title="Account Balance"
-                amount={balance}
+                amount={formatAmount(balance)}
                 icon={<GiWallet />}
             />
             <DashboardCard
                 title="Your Deposit"
-                amount={deposit}
+                amount={formatAmount(deposit)}
                 icon={<BsFillCloudDownloadFill />}
             />
             <DashboardCard
                 title="Your Withdrawal"
-                amount={withdrawal}
+                amount={formatAmount(withdrawal)}
                 icon={<BsCloudUploadFill />}
             />
             <DashboardCard
                 title="Accumulated Interest/profit"
-                amount={profit}
+                amount={formatAmount(profit)}
                 icon={<GiProfit />}
+            />
+            <DashboardCard
+                title="Referral Bonus"
+                amount={formatAmount(referralBonus)}
+                icon={<GiPerson />}
             />
         </div>
     );

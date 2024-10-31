@@ -47,7 +47,7 @@ const Footer = () => {
                             to="mailto:homyreal@demo.com"
                             className="block mt-2 text-gray-200 hover:text-white"
                         >
-                            homyreal@demo.com
+                            support@algotrades.io
                         </Link>
                     </div>
 

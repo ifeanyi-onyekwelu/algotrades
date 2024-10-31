@@ -29,9 +29,9 @@ export const passwordSchema = z
     .refine((value) => /[0-9]/.test(value), {
         message: "Password must contaiin at least one number",
     })
-    .refine((value) => /[!@#$%^&*]/.test(value), {
+    .refine((value) => /[!@#$%^&*?()-]/.test(value), {
         message:
-            "Password must contaiin at least one special character (!@#$%^&*)",
+            "Password must contaiin at least one special character (!@#$%^&*?()-)",
     });
 
 export const registrationSchema = z.object({

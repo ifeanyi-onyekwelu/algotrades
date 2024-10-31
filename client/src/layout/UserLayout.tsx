@@ -36,8 +36,7 @@ const UserLayout = () => {
                     email={profileData?.email}
                 />
                 <div className="px-1 md:px-4">
-                    <Outlet context={profileData} />{" "}
-                    {/* Pass profileData to Outlet */}
+                    <Outlet context={profileData} />
                 </div>
             </div>
         </div>

@@ -5,19 +5,8 @@ import asyncHandler from "express-async-handler";
 import { Request, Response } from "../utils/Types";
 import { NotFoundError } from "../utils/errors";
 import { getUserById } from "../services/user.service";
-
-const formatDateString = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-    };
-    const formattedDate = new Date(dateString).toLocaleDateString(
-        undefined,
-        options
-    );
-    return formattedDate;
-};
+import walletModel from "../models/wallet.model";
+import planModel from "../models/plan.model";
 
 export const fetchAllDeposits = asyncHandler(
     async (req: Request, res: Response) => {
@@ -75,20 +64,54 @@ export const handleDeposit = asyncHandler(
         const status = req.params.status;
         const depositId = req.params.depositId;
 
-        console.log("DEPOSIT ID", depositId);
-
         const deposit = await depositModel.findByIdAndUpdate(
             depositId,
             { $set: { status } },
-            { new: status }
+            { new: true }
         );
 
-        if (!deposit)
+        if (!deposit) {
             return logError(res, new NotFoundError("Deposit not found"));
+        }
 
-        const user = getUserById(deposit?.user);
+        const user = await getUserById(deposit.user);
+        const userWallet = await walletModel.findOne({
+            "user.userId": user._id,
+        });
 
-        // send mail to the user and admin
+        if (!userWallet) {
+            return logError(res, new NotFoundError("User wallet not found"));
+        }
+
+        const investmentPlan = await planModel.findOne({ _id: deposit.plan });
+
+        if (status === "approved") {
+            user.currentPlan = {
+                planId: investmentPlan._id,
+                planName: investmentPlan.name,
+                investmentDate: new Date(),
+                endDate: new Date(Date.now() + investmentPlan.duration),
+                initialInvestment: deposit.amount,
+            };
+            await user.save();
+
+            userWallet.balance += deposit.amount;
+            await userWallet.save();
+
+            // Referral bonus logic
+            if (user.referredBy) {
+                const referringUserWallet = await walletModel.findOne({
+                    "user.userId": user.referredBy,
+                });
+
+                if (referringUserWallet) {
+                    const referralBonus = deposit.amount * 0.1; // 10% of the deposit amount
+                    referringUserWallet.referralBonus += referralBonus;
+                    await referringUserWallet.save();
+                }
+            }
+        }
+
         emailService.sendDepositStatusUpdate(user, deposit.amount, status);
 
         return logData(res, 200, {

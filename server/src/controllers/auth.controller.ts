@@ -19,16 +19,23 @@ import {
     generateReferralLink,
     generateVerificationToken,
 } from "../utils/jwtUtils";
+import { z } from "zod";
 import { emailService } from "..";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "../utils/Types";
 import walletModel from "../models/wallet.model";
-import { getUserById } from "../services/user.service";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
     const data = req.body;
-    registrationSchema.parse(data);
-
+    try {
+        registrationSchema.parse(data);
+    } catch (error: any) {
+        if (error instanceof z.ZodError) {
+            return res.status(400).json({ errors: error.errors });
+        } else {
+            return logError(res, error);
+        }
+    }
     // Check for existing email
     const filterByEmail = await userModel.findOne({ email: data.email });
     if (filterByEmail) {
@@ -72,7 +79,6 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
                 data.referralToken,
                 process.env.JWT_SECRET!
             );
-            console.log(decodedToken);
             referrerUser = await userModel.findById(decodedToken.id);
             if (!referrerUser) {
                 return logError(
@@ -98,6 +104,8 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
             email: user.email,
         });
         await referrerUser.save();
+        user.referredBy = referrerUser._id;
+        await user.save();
     }
 
     // Create wallet for the user
@@ -215,7 +223,11 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
         maxAge: 24 * 60 * 60 * 1000,
     });
 
-    return logData(res, 200, { accessToken, role: foundUser.role });
+    return logData(res, 200, {
+        accessToken,
+        role: foundUser.role,
+        isVerified: foundUser.isVerified,
+    });
 });
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {

@@ -40,7 +40,7 @@ const AdminLayout = () => {
                 toggleSidebar={toggleSidebar}
             />
 
-            <div className="flex-1 flex flex-col w-[80%] sm:ml-[20%]">
+            <div className="flex-1 flex flex-col w-[75%] sm:ml-[25%]">
                 {/* Navbar */}
                 <NavBar
                     toggleSidebar={toggleSidebar}
@@ -59,7 +59,7 @@ const AdminLayout = () => {
                         className=" text-white py-2 px-4 rounded block md:ml-auto ml-6 md:mr-6 bg-primary my-2"
                         onClick={() => setIsDrawerOpen(true)}
                     >
-                        Update User Profit
+                        Update User Balance / Profit
                     </button>
 
                     <Outlet />
