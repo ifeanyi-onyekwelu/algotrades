@@ -53,13 +53,13 @@ const calculateProfit = async () => {
 };
 
 // This will run every minute
-cron.schedule("* * * * *", () => {
-    console.log("Running profit calculation cron job every minute...");
-    calculateProfit();
-});
-
-// Uncomment the following line to switch to a daily schedule (every 24 hours) after testing
-// cron.schedule("0 9 * * 1-5", () => {
-//     console.log("Running daily profit calculation cron job...");
+// cron.schedule("* * * * *", () => {
+//     console.log("Running profit calculation cron job every minute...");
 //     calculateProfit();
 // });
+
+// Uncomment the following line to switch to a daily schedule (every 24 hours) after testing
+cron.schedule("0 9 * * 1-5", () => {
+    console.log("Running daily profit calculation cron job...");
+    calculateProfit();
+});
