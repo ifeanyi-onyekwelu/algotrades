@@ -1,45 +1,37 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import {
     useHandleUserWithdrawalMutation,
+    useHandleTransferProfitToBalanceMutation,
     useGetUserWalletQuery,
 } from "../../features/user/api/userApiSlice";
-import { Button, FormControl, SelectChangeEvent } from "@mui/material";
+import { Button, FormControl } from "@mui/material";
 import AlertMessage from "../common/Snackbar.tsx";
 import { LoadingBackdrop } from "../LoadingBackdrop.tsx";
 import FormSelect from "../common/FormSelect.tsx";
 import FormInput from "../common/FormInput.tsx";
 import formatAmount from "../../config/format.ts";
 
-interface FormState {
-    currency: string;
-    source: string;
-    amount: string;
-}
-
 const WithdrawalForm = () => {
-    const [formState, setFormState] = useState<FormState>({
+    const [formState, setFormState] = useState({
         currency: "",
         source: "",
         amount: "",
     });
-    const [errorMessage, setErrorMessage] = useState<string>("");
-    const [successMessage, __] = useState<string>("");
-    const [statusType, _] = useState<"error" | "success">("error");
-    const [showAlert, setShowAlert] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
+    const [statusType, setStatusType] = useState<"error" | "success">("error");
+    const [showAlert, setShowAlert] = useState(false);
 
     const { data: walletData, isLoading: isWalletLoading } =
         useGetUserWalletQuery({});
 
-    if (isWalletLoading) return <p>Loading...</p>;
+    const [withdraw, { isLoading: isWithdrawLoading }] =
+        useHandleUserWithdrawalMutation();
 
-    const wallet = walletData?.wallet;
-    console.log(wallet);
+    const [transferProfitToBalance, { isLoading: isTransferLoading }] =
+        useHandleTransferProfitToBalanceMutation();
 
-    const [withdraw, { isLoading }] = useHandleUserWithdrawalMutation();
-
-    const handleOnChange = (
-        e: SelectChangeEvent<string> | ChangeEvent<HTMLInputElement>,
-    ) => {
+    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormState((prevState) => ({
             ...prevState,
@@ -52,12 +44,31 @@ const WithdrawalForm = () => {
         try {
             const response = await withdraw(formState).unwrap();
             console.log(response);
+            setSuccessMessage("Withdrawal successful!");
+            setStatusType("success");
+            setShowAlert(true);
         } catch (error: any) {
-            console.log(error);
             setErrorMessage(error?.data?.message || "An error occurred");
             setShowAlert(true);
         }
     };
+
+    const handleTransferProfitToBalance = async () => {
+        try {
+            const response = await transferProfitToBalance({}).unwrap();
+            console.log(response);
+            setSuccessMessage("Profit transferred to main balance!");
+            setStatusType("success");
+            setShowAlert(true);
+        } catch (error: any) {
+            setErrorMessage(error?.data?.message || "An error occurred");
+            setShowAlert(true);
+        }
+    };
+
+    if (isWalletLoading) return <p>Loading...</p>;
+
+    const wallet = walletData?.wallet;
 
     return (
         <form
@@ -99,14 +110,6 @@ const WithdrawalForm = () => {
                             value: "balance",
                             title: `Withdraw from balance ($${formatAmount(wallet.balance)})`,
                         },
-                        {
-                            value: "profit",
-                            title: `Withdraw from profit ($${formatAmount(wallet.profit)})`,
-                        },
-                        {
-                            value: "referralBonus",
-                            title: `Withdraw from referral bonus ($${formatAmount(wallet.referralBonus)})`,
-                        },
                     ]}
                 />
             </FormControl>
@@ -131,10 +134,25 @@ const WithdrawalForm = () => {
                     fontSize: "16px",
                     marginTop: "20px",
                 }}
-                disabled={isLoading}
+                disabled={isWithdrawLoading}
             >
                 Withdraw
             </Button>
+
+            <Button
+                onClick={handleTransferProfitToBalance}
+                variant="outlined"
+                sx={{
+                    fontWeight: "bold",
+                    padding: "8px 25px",
+                    fontSize: "16px",
+                    marginTop: "20px",
+                }}
+                disabled={isTransferLoading}
+            >
+                Transfer Profit to Balance
+            </Button>
+
             <AlertMessage
                 errorMessage={errorMessage}
                 successMessage={successMessage}
@@ -142,7 +160,7 @@ const WithdrawalForm = () => {
                 showAlert={showAlert}
                 setShowAlert={setShowAlert}
             />
-            <LoadingBackdrop open={isLoading} />
+            <LoadingBackdrop open={isWithdrawLoading || isTransferLoading} />
         </form>
     );
 };

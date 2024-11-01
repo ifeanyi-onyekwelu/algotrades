@@ -1,6 +1,6 @@
 const allowedOrigins: string[] = [
     "https://algotrades.io",
-    "http://localhost:5173",
+    "http://localhost:5175",
     "https://www.algotrades.io",
 ];
 

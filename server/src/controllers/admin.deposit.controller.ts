@@ -75,13 +75,6 @@ export const handleDeposit = asyncHandler(
         }
 
         const user = await getUserById(deposit.user);
-        const userWallet = await walletModel.findOne({
-            "user.userId": user._id,
-        });
-
-        if (!userWallet) {
-            return logError(res, new NotFoundError("User wallet not found"));
-        }
 
         const investmentPlan = await planModel.findOne({ _id: deposit.plan });
 
@@ -94,9 +87,6 @@ export const handleDeposit = asyncHandler(
                 initialInvestment: deposit.amount,
             };
             await user.save();
-
-            userWallet.balance += deposit.amount;
-            await userWallet.save();
 
             // Referral bonus logic
             if (user.referredBy) {

@@ -81,10 +81,9 @@ const ReinvestForm = () => {
     const handleOnSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await reinvest(formState).unwrap();
-            console.log(response);
+            await reinvest(formState).unwrap();
             setSuccessMessage(
-                `You have successfully reinvested ${formState.amount}`,
+                `You have successfully reinvested $${formatAmount(formState.amount)}`,
             );
             setStatusType("success");
             setShowAlert(true);
@@ -117,10 +116,6 @@ const ReinvestForm = () => {
                         {
                             value: "balance",
                             title: `Reinvest from my balance ($${formatAmount(wallet?.balance)})`,
-                        },
-                        {
-                            value: "profit",
-                            title: `Reinvest from my profit ($${formatAmount(wallet?.profit)})`,
                         },
                     ]}
                 />

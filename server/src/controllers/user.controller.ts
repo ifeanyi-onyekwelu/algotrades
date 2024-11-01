@@ -12,7 +12,6 @@ import uploadImage from "../utils/uploader";
 export const getUserProile = asyncHandler(
     async (req: Request, res: Response) => {
         const user = await getUserById(req.session.user.id);
-        console.log(user);
         return logData(res, 200, { user });
     }
 );

@@ -79,6 +79,32 @@ export const withdrawalHandler = asynchHandler(
     }
 );
 
+export const transferProfitToBalanceHandler = asynchHandler(
+    async (req: Request, res: Response) => {
+        const user = await getUserById(req.session.user.id);
+
+        // Fetch user's wallet
+        const wallet = await walletModel.findOne({ "user.userId": user?._id });
+        if (!wallet) {
+            return res.status(404).json({ message: "Wallet not found" });
+        }
+
+        // Transfer profit to balance
+        const profitBalance = wallet.profit;
+
+        wallet.balance += profitBalance;
+        wallet.profit -= profitBalance;
+
+        // Save the updated wallet
+        await wallet.save();
+
+        return res.status(200).json({
+            message: "Profit successfully transferred to balance",
+            wallet,
+        });
+    }
+);
+
 export const getAllWithdrawals = asynchHandler(
     async (req: Request, res: Response) => {
         const user = await getUserById(req.session.user.id);

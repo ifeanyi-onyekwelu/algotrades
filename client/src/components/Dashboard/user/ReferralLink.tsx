@@ -16,10 +16,12 @@ const ReferralLink = ({ link }: { link: string }) => {
                 Grow Your Algotrades Network
             </h3>
             <p className="text-gray-600">
-                Invite friends to increase your earning potential. Share your
-                unique referral link below and start building your team. Simply
-                click the button to copy and share.
+                Boost your earning potential by inviting friends to join. Share
+                your unique referral link below to start building your team. For
+                every user you refer who makes an investment, you'll earn a 10%
+                bonus! Click the button to copy and share your link.
             </p>
+
             {/* Referral link input field */}
             <div className="space-y-2">
                 <input

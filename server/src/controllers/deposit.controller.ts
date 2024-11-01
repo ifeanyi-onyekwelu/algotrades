@@ -60,7 +60,6 @@ export const depositHandler = asynchHandler(
             status: "active",
             profitAccumulated: 0,
         });
-        console.log(investment);
 
         if (deposit) {
             await Promise.all([
@@ -97,6 +96,15 @@ export const reinvestHandler = asynchHandler(
                 res,
                 new BadRequestError(
                     `Minimum investment for this plan is ${selectedPlan.initialInvestment}`
+                )
+            );
+        }
+
+        if (user.currentPlan) {
+            return logError(
+                res,
+                new BadRequestError(
+                    "You already have an active investment. Complete it before reinvesting."
                 )
             );
         }

@@ -58,6 +58,12 @@ const userApiSlice = baseApi.injectEndpoints({
                 body: withdrawalData,
             }),
         }),
+        handleTransferProfitToBalance: builder.mutation({
+            query: () => ({
+                url: "/withdrawals/transfer-profit-to-balance",
+                method: "POST",
+            }),
+        }),
         getAllUserWithdrawals: builder.query({
             query: () => "/withdrawals/all",
         }),
@@ -95,6 +101,7 @@ export const {
     useGetAllUserDepositsQuery,
     useGetUserTotalDepositQuery,
     useHandleUserWithdrawalMutation,
+    useHandleTransferProfitToBalanceMutation,
     useGetAllUserWithdrawalsQuery,
     useGetUserTotalWithdrawalQuery,
     useGetAllUserPlansQuery,
