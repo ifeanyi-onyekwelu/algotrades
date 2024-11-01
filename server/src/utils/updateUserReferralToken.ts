@@ -5,13 +5,11 @@ import jwt from "jsonwebtoken";
 
 const isTokenExpired = (token: string): boolean => {
     try {
-        // Verify the token with your secret key
         jwt.verify(token, process.env.JWT_SECRET!);
-        return false; // Token is valid
+        return false;
     } catch (error) {
-        // If there's an error, check if it's due to expiration
-        if (error instanceof jwt.TokenExpiredError) {
-            return true; // Token has expired
+        if (error instanceof jwt.JsonWebTokenError) {
+            return true;
         }
         console.error("Token verification error:", error);
         throw error;
@@ -23,17 +21,14 @@ const updateUserReferralToken = async (
     existingToken: string
 ) => {
     try {
-        // Check if the existing token has expired
         if (existingToken && !isTokenExpired(existingToken)) {
             console.log(`Token still valid for user ${userId}`);
-            return existingToken; // No need to update if token is still valid
+            return existingToken;
         }
 
-        // Generate a new referral token with 1-day expiry for expired tokens
         const newToken = generateToken(userId, "1d");
         const newReferralLink = `${process.env.CLIENT_URL}/auth/register?ref=${newToken}`;
 
-        // Update the user's referral link in the database
         await userModel.findByIdAndUpdate(userId, {
             referralLink: newReferralLink,
         });
@@ -51,11 +46,10 @@ const updateUserReferralToken = async (
 
 const updateAllUserReferralTokens = async () => {
     try {
-        const users = await userModel.find(); // Find all users
+        const users = await userModel.find();
 
         for (const user of users) {
             if (user._id && user.referralLink) {
-                // Extract the token from the referral link query parameter
                 const token = user.referralLink.split("ref=")[1];
                 await updateUserReferralToken(user._id, token);
             }

@@ -35,7 +35,7 @@ export const generateToken = (
 export const generatePasswordResetLink = (userId: mongoose.Types.ObjectId) => {
     return `${process.env.CLIENT_URL}/auth/password-reset?token=${generateToken(
         userId,
-        null // Pass null to create a token without expiration
+        null
     )}`;
 };
 
@@ -46,6 +46,6 @@ export const generateVerificationToken = () => {
 export const generateReferralLink = (userId: mongoose.Types.ObjectId) => {
     return `${process.env.CLIENT_URL}/auth/register?ref=${generateToken(
         userId,
-        "1d"
+        null
     )}`;
 };
