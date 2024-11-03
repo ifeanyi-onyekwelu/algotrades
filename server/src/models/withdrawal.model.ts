@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 interface IWithdrawal {
     user: mongoose.Schema.Types.ObjectId;
     amount: number;
+    walletAddress: string;
     status?: "pending" | "approved" | "rejected";
     currency: string;
     profitOrBalance: "balance" | "profit";
@@ -21,6 +22,9 @@ const withdrawalSchema = new mongoose.Schema<IWithdrawal>(
         amount: {
             type: Number,
             required: [true, "Please specify an amount"],
+        },
+        walletAddress: {
+            type: String,
         },
         status: {
             type: String,

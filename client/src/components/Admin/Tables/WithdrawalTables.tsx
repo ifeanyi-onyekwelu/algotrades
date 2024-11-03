@@ -10,6 +10,7 @@ export function AllWithdrawalTable({ withdrawals }: any) {
                         <Table.HeadCell>Username</Table.HeadCell>
                         <Table.HeadCell>Currency</Table.HeadCell>
                         <Table.HeadCell>($) Amount</Table.HeadCell>
+                        <Table.HeadCell>Wallet Address</Table.HeadCell>
                         <Table.HeadCell>Status</Table.HeadCell>
                         <Table.HeadCell>Profit/Balance</Table.HeadCell>
                         <Table.HeadCell>Date</Table.HeadCell>
@@ -27,6 +28,9 @@ export function AllWithdrawalTable({ withdrawals }: any) {
                                 <Table.Cell>{withdrawal.currency}</Table.Cell>
                                 <Table.Cell>
                                     {formatAmount(withdrawal.amount)}
+                                </Table.Cell>
+                                <Table.Cell>
+                                    {withdrawal.walletAddress}
                                 </Table.Cell>
                                 <Table.Cell>{withdrawal.status}</Table.Cell>
                                 <Table.Cell>

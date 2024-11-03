@@ -16,6 +16,7 @@ const WithdrawalForm = () => {
         currency: "",
         source: "",
         amount: "",
+        walletAddress: "",
     });
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -95,6 +96,10 @@ const WithdrawalForm = () => {
                             value: "USD Tether ERC20 (USDTERC20)",
                             title: "USD Tether ERC20 (USDTERC20)",
                         },
+                        {
+                            value: "BTC Bitcoin",
+                            title: "BTC Bitcoin",
+                        },
                     ]}
                 />
             </FormControl>
@@ -115,6 +120,16 @@ const WithdrawalForm = () => {
             </FormControl>
 
             <FormControl fullWidth margin="normal">
+                <FormInput
+                    id="walletAddress"
+                    label="Wallet Address"
+                    name="walletAddress"
+                    value={formState.walletAddress}
+                    onChange={handleOnChange}
+                />
+            </FormControl>
+
+            <FormControl fullWidth>
                 <FormInput
                     id="amount"
                     label="Amount"
