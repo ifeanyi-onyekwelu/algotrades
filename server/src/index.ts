@@ -19,6 +19,7 @@ export const emailService = new EmailService();
 
 config();
 dbConn().then((r) => console.log("MongoDB Connected"));
+
 updateAllUserReferralTokens();
 
 const app = express();

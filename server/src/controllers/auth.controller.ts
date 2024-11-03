@@ -75,11 +75,9 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     let referrerUser = null;
     if (data.referralToken) {
         try {
-            const decodedToken: any = verifyToken(
-                data.referralToken,
-                process.env.JWT_SECRET!
-            );
-            referrerUser = await userModel.findById(decodedToken.id);
+            referrerUser = await userModel.findOne({
+                referralCode: data.referralToken,
+            });
             if (!referrerUser) {
                 return logError(
                     res,
@@ -142,7 +140,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     // Update user last login and refresh token
     user.lastLogin = new Date().toUTCString();
     user.refreshToken = refreshToken;
-    user.referralLink = generateReferralLink(user._id);
+    user.referralLink = await generateReferralLink(user._id);
     await user.save();
 
     // Set session

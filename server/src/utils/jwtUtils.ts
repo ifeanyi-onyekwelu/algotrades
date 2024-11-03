@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import userModel from "@/models/user.model";
 
 interface User {
     id: mongoose.Types.ObjectId;
@@ -43,9 +45,9 @@ export const generateVerificationToken = () => {
     return Math.floor(100000 + Math.random() * 900000);
 };
 
-export const generateReferralLink = (userId: mongoose.Types.ObjectId) => {
-    return `${process.env.CLIENT_URL}/auth/register?ref=${generateToken(
-        userId,
-        null
-    )}`;
+// Generate a random alphanumeric code
+export const generateReferralLink = async (userId: mongoose.Types.ObjectId) => {
+    const shortCode = crypto.randomBytes(4).toString("hex");
+    await userModel.findByIdAndUpdate(userId, { referralCode: shortCode });
+    return `${process.env.CLIENT_URL}/auth/register?ref=${shortCode}`;
 };

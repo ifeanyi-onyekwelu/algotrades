@@ -53,6 +53,8 @@ export const withdrawalHandler = asynchHandler(
             wallet.balance -= withdrawalAmount;
         } else if (withdrawObject.source === "profit") {
             wallet.profit -= withdrawalAmount;
+        } else if (withdrawObject.source === "referralBonus") {
+            wallet.referralBonus -= withdrawalAmount;
         }
 
         // Save the updated wallet

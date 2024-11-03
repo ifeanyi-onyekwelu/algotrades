@@ -31,6 +31,7 @@ interface IUser {
     passportNumber: string | null;
     contactAddress: string | null;
     isVerified: boolean;
+    referralCode: string | null;
     referralLink: string | null;
     createdAt: Date;
     role: string;
@@ -81,6 +82,7 @@ const userSchema = new mongoose.Schema<IUser>(
         emailVerificationToken: { type: Number, default: null },
         isVerified: { type: Boolean, default: false },
         referralLink: { type: String },
+        referralCode: { type: String },
         createdAt: { type: Date, default: Date.now },
         role: { type: String, enum: ["admin", "user"], default: "user" },
         profilePicture: { type: String },

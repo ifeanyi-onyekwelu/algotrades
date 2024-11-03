@@ -62,13 +62,4 @@ const calculateProfit = async () => {
 cron.schedule("0 0 * * *", async () => {
     console.log("Running daily profit calculation cron job...");
     calculateProfit();
-
-    // Run daily referral token update
-    console.log("Running daily referral token update...");
-    try {
-        await updateAllUserReferralTokens();
-        console.log("Daily referral token update completed.");
-    } catch (error) {
-        console.error("Error in daily referral token update:", error);
-    }
 });

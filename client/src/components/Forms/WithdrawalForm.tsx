@@ -115,6 +115,10 @@ const WithdrawalForm = () => {
                             value: "balance",
                             title: `Withdraw from balance ($${formatAmount(wallet.balance)})`,
                         },
+                        {
+                            value: "referralBonus",
+                            title: `Withdraw from referral bonus ($${formatAmount(wallet.referralBonus)})`,
+                        },
                     ]}
                 />
             </FormControl>
