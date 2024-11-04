@@ -5,6 +5,8 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 import { useState } from "react";
 import { useUpdateUserProfitMutation } from "../../features/admin/api/adminApiSlice";
 import AlertMessage from "../common/Snackbar";
@@ -29,19 +31,19 @@ export function Component({ isOpen, setIsOpen }: any) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(updateField);
 
         try {
-            const response = await updateUserProfit({
+            await updateUserProfit({
                 username,
                 amount,
                 operationType,
                 updateField,
             });
 
-            console.log(response);
             setSuccessMessage(
-                `${updateField.charAt(0).toUpperCase() + updateField.slice(1)} ${operationType === "add" ? "added" : "removed"} successfully for ${username}!`,
+                `${updateField.charAt(0).toUpperCase() + updateField.slice(1)} ${
+                    operationType === "add" ? "added" : "removed"
+                } successfully for ${username}!`,
             );
             setStatusType("success");
             setShowAlert(true);
@@ -49,11 +51,12 @@ export function Component({ isOpen, setIsOpen }: any) {
             setAmount("");
             setOperationType("add");
             setUpdateField("profit");
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
         } catch (error: any) {
-            console.log(error);
             setErrorMessage(error);
             setStatusType("error");
-            console.error("Failed to update:", error);
         }
     };
 
@@ -100,62 +103,45 @@ export function Component({ isOpen, setIsOpen }: any) {
 
                     {/* Field Type Selection */}
                     <div className="mb-6">
-                        <FormControl component="fieldset">
-                            <div className="flex items-center">
-                                <label className="mr-4">
-                                    <input
-                                        type="radio"
-                                        value="profit"
-                                        name="updateField"
-                                        checked={updateField === "profit"}
-                                        onChange={() =>
-                                            setUpdateField("profit")
-                                        }
-                                    />
-                                    Update Profit
-                                </label>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        value="balance"
-                                        name="updateField"
-                                        checked={updateField === "balance"}
-                                        onChange={() => {
-                                            setUpdateField("balance");
-                                            console.log(updateField);
-                                        }}
-                                    />
-                                    Update Balance
-                                </label>
-                            </div>
+                        <FormControl fullWidth sx={{ m: 1 }}>
+                            <InputLabel id="update-field-label">
+                                Update Field
+                            </InputLabel>
+                            <Select
+                                labelId="update-field-label"
+                                value={updateField}
+                                label="Update Field"
+                                onChange={(e) =>
+                                    setUpdateField(
+                                        e.target.value as "balance" | "profit",
+                                    )
+                                }
+                            >
+                                <MenuItem value="profit">Profit</MenuItem>
+                                <MenuItem value="balance">Balance</MenuItem>
+                            </Select>
                         </FormControl>
                     </div>
 
                     {/* Operation Type Selection */}
                     <div className="mb-6">
-                        <FormControl component="fieldset">
-                            <div className="flex items-center">
-                                <label className="mr-4">
-                                    <input
-                                        type="radio"
-                                        value="add"
-                                        checked={operationType === "add"}
-                                        onChange={() => setOperationType("add")}
-                                    />
-                                    Add
-                                </label>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        value="remove"
-                                        checked={operationType === "remove"}
-                                        onChange={() =>
-                                            setOperationType("remove")
-                                        }
-                                    />
-                                    Remove
-                                </label>
-                            </div>
+                        <FormControl fullWidth sx={{ m: 1 }}>
+                            <InputLabel id="operation-type-label">
+                                Operation Type
+                            </InputLabel>
+                            <Select
+                                labelId="operation-type-label"
+                                value={operationType}
+                                label="Operation Type"
+                                onChange={(e) =>
+                                    setOperationType(
+                                        e.target.value as "add" | "remove",
+                                    )
+                                }
+                            >
+                                <MenuItem value="add">Add</MenuItem>
+                                <MenuItem value="remove">Remove</MenuItem>
+                            </Select>
                         </FormControl>
                     </div>
 
