@@ -100,15 +100,6 @@ export const reinvestHandler = asynchHandler(
             );
         }
 
-        if (user.currentPlan) {
-            return logError(
-                res,
-                new BadRequestError(
-                    "You already have an active investment. Complete it before reinvesting."
-                )
-            );
-        }
-
         // Check the source of funds and deduct from the appropriate wallet field
         if (source === "balance" && amount > wallet.balance) {
             return logError(
