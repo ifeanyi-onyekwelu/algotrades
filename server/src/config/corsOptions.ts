@@ -1,7 +1,6 @@
 const allowedOrigins: string[] = [
     "https://algotrades.io",
     "https://www.algotrades.io",
-    "http://localhost:5174",
 ];
 
 const corsOptions = {

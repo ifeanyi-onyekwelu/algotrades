@@ -6,7 +6,7 @@ import Alert from "@mui/material/Alert";
 interface AlertMessageProps {
     errorMessage: string;
     successMessage: string;
-    statusType: "error" | "success";
+    statusType: "error" | "success" | "info";
     showAlert: boolean;
     setShowAlert: (open: boolean) => void;
 }

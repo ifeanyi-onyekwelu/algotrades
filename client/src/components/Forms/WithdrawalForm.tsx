@@ -20,7 +20,9 @@ const WithdrawalForm = () => {
     });
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
-    const [statusType, setStatusType] = useState<"error" | "success">("error");
+    const [statusType, setStatusType] = useState<"error" | "success" | "info">(
+        "error",
+    );
     const [showAlert, setShowAlert] = useState(false);
 
     const { data: walletData, isLoading: isWalletLoading } =
@@ -45,8 +47,10 @@ const WithdrawalForm = () => {
         try {
             const response = await withdraw(formState).unwrap();
             console.log(response);
-            setSuccessMessage("Withdrawal successful!");
-            setStatusType("success");
+            setSuccessMessage(
+                "Withdrawal request received! Our team is reviewing it, and you'll be notified once it's approved.",
+            );
+            setStatusType("info");
             setShowAlert(true);
         } catch (error: any) {
             setErrorMessage(error?.data?.message || "An error occurred");
