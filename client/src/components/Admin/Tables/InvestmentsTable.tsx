@@ -1,28 +1,7 @@
 import { Table } from "flowbite-react";
-import { useDeleteUserMutation } from "../../../features/admin/api/adminApiSlice";
-import AlertMessage from "../../common/Snackbar";
-import { useState } from "react";
 import formatAmount from "../../../config/format";
 
 export function InvestmentTable({ users }: any) {
-    const [showAlert, setShowAlert] = useState<boolean>(false);
-    const [errorMessage, setErrorMessage] = useState<string>("");
-    const [successMessage, setSuccessMessage] = useState<string>("");
-    const [statusType, setStatusType] = useState<"error" | "success">("error");
-    const [deleteUser] = useDeleteUserMutation();
-
-    const handleAction = async (userId: any) => {
-        try {
-            await deleteUser({ userId });
-
-            setSuccessMessage(`User deleted successfully`);
-            setStatusType("success");
-            setShowAlert(true);
-        } catch (error: any) {
-            setErrorMessage(error?.data);
-            setShowAlert(true);
-        }
-    };
     return (
         <div className="overflow-x-auto">
             {users ? (
@@ -84,14 +63,6 @@ export function InvestmentTable({ users }: any) {
             ) : (
                 <p>No users</p>
             )}
-
-            <AlertMessage
-                errorMessage={errorMessage}
-                successMessage={successMessage}
-                statusType={statusType}
-                showAlert={showAlert}
-                setShowAlert={setShowAlert}
-            />
         </div>
     );
 }
