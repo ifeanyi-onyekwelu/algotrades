@@ -1,9 +1,7 @@
 import cron from "node-cron";
-import mongoose from "mongoose";
 import userModel from "./models/user.model";
 import planModel from "./models/plan.model";
 import walletModel from "./models/wallet.model";
-import updateAllUserReferralTokens from "./utils/updateUserReferralToken";
 
 const calculateProfit = async () => {
     try {
