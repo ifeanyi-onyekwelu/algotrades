@@ -10,6 +10,7 @@ import { GoMultiSelect } from "react-icons/go";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import Logo from "../../assets/images/logo.png";
 import { IoClose } from "react-icons/io5";
+import { GiProfit } from "react-icons/gi";
 
 // Import hooks for counts
 import {
@@ -55,6 +56,16 @@ const AdminSidebar = ({ isOpen, toggleSidebar }: any) => {
                         icon={TbLayoutDashboardFilled}
                     >
                         Dashboard
+                    </Sidebar.Item>
+                </Sidebar.ItemGroup>
+
+                <Sidebar.ItemGroup>
+                    <Sidebar.Item
+                        as={Link}
+                        to="/admin/investments"
+                        icon={GiProfit}
+                    >
+                        Investments
                     </Sidebar.Item>
 
                     <Sidebar.Item as={Link} to="/admin/wallets" icon={IoWallet}>

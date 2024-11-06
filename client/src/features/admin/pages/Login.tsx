@@ -5,11 +5,10 @@ const LoginPage = () => {
     return (
         <Box
             sx={{
-                minHeight: "100vh",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                padding: "0 20px",
+                padding: "20px 20px",
             }}
         >
             <Paper

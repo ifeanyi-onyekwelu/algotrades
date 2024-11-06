@@ -12,6 +12,7 @@ import DeclinedWithdrawals from "../features/admin/pages/Withdrawals/DeclinedWit
 import Plans from "../features/admin/pages/Plans.tsx";
 import AdminProfile from "../features/admin/pages/Profile.tsx";
 import AllUserWallets from "../features/admin/pages/wallets.tsx";
+import Investments from "../features/admin/pages/investments.tsx";
 
 function AdminRoutes() {
     return (
@@ -44,7 +45,7 @@ function AdminRoutes() {
                 />
                 <Route path="/plans" element={<Plans />} />
                 <Route path="/settings" element={<AdminProfile />} />
-                <Route path="*" />
+                <Route path="/investments" element={<Investments />} />
             </Route>
         </Routes>
     );

@@ -37,7 +37,9 @@ const DepositForm = () => {
     });
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [successMessage, setSuccessMessage] = useState<string>("");
-    const [statusType, setStatusType] = useState<"error" | "success">("error");
+    const [statusType, setStatusType] = useState<"error" | "success" | "info">(
+        "error",
+    );
     const [showAlert, setShowAlert] = useState<boolean>(false);
     const [openDialog, setOpenDialog] = useState<boolean>(false); // For the dialog
     const [isConfirmLoading, setIsConfirmLoading] = useState<boolean>(false); // Loading state for confirm button
@@ -105,8 +107,10 @@ const DepositForm = () => {
             await deposit({
                 ...formState,
             }).unwrap();
-            setSuccessMessage("Deposit successfully confirmed.");
-            setStatusType("success");
+            setSuccessMessage(
+                "Deposit request received! Our team is reviewing it, and you'll be notified once it's approved.",
+            );
+            setStatusType("info");
             setOpenDialog(false);
             setShowAlert(true);
         } catch (error: any) {

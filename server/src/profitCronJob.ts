@@ -22,8 +22,8 @@ const calculateProfit = async () => {
             // Calculate daily profit
             const dailyProfit = plan.profit / plan.duration;
 
-            // Check if the simulated days are within the duration
-            if (simulatedDays < plan.duration) {
+            // Check if incrementing simulatedDays will complete the plan duration
+            if (simulatedDays + 1 < plan.duration) {
                 // Update user's wallet profit
                 await walletModel.findOneAndUpdate(
                     { "user.userId": user._id },
@@ -31,7 +31,8 @@ const calculateProfit = async () => {
                 );
 
                 // Increment the simulated day count
-                user.currentPlan.simulatedDays = simulatedDays + 1;
+                user.currentPlan.simulatedDays += 1;
+                user.currentPlan.profitAccumulated += dailyProfit;
                 await user.save();
 
                 console.log(
@@ -42,9 +43,16 @@ const calculateProfit = async () => {
                     })`
                 );
             } else {
-                // If the duration is completed, remove the current plan
-                user.currentPlan = null;
+                // If this is the last day, update the profit and remove the plan
+                await walletModel.findOneAndUpdate(
+                    { "user.userId": user._id },
+                    { $inc: { profit: dailyProfit } }
+                );
+
+                user.currentPlan.profitAccumulated += dailyProfit;
+                user.currentPlan = null; // Remove the plan immediately
                 await user.save();
+
                 console.log(`Ended investment for user ${user.username}`);
             }
         }
@@ -53,9 +61,8 @@ const calculateProfit = async () => {
     }
 };
 
-// This will run every minute
 // cron.schedule("* * * * *", () => {
-//     console.log("Running profit calculation cron job every minute...");
+//     console.log("Running profit calculation cron job every hour...");
 //     calculateProfit();
 // });
 

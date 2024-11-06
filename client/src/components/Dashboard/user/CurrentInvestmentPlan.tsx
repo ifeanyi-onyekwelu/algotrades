@@ -41,6 +41,19 @@ const CurrentInvestmentPlan = ({ investmentPlan, profit }: any) => {
                                 </span>
                             </p>
                         )}
+                        {investmentPlan.investmentDate && (
+                            <p className="flex items-center text-gray-700">
+                                <FaCalendarAlt className="text-blue-400 mr-2" />
+                                <span className="font-semibold">
+                                    Start Date:
+                                </span>
+                                <span className="ml-2 text-gray-600">
+                                    {new Date(
+                                        investmentPlan.investmentDate,
+                                    ).toLocaleDateString()}
+                                </span>
+                            </p>
+                        )}
                         {investmentPlan.endDate && (
                             <p className="flex items-center text-gray-700">
                                 <FaCalendarAlt className="text-blue-400 mr-2" />
@@ -49,6 +62,17 @@ const CurrentInvestmentPlan = ({ investmentPlan, profit }: any) => {
                                     {new Date(
                                         investmentPlan.endDate,
                                     ).toLocaleDateString()}
+                                </span>
+                            </p>
+                        )}
+                        {investmentPlan.simulatedDays && (
+                            <p className="flex items-center text-gray-700">
+                                <FaCalendarAlt className="text-blue-400 mr-2" />
+                                <span className="font-semibold">
+                                    Days Gone:
+                                </span>
+                                <span className="ml-2 text-gray-600">
+                                    {investmentPlan.simulatedDays}
                                 </span>
                             </p>
                         )}
