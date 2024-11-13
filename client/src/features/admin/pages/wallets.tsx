@@ -8,6 +8,8 @@ const AllUserWallets = () => {
     if (isLoading) return <p>Loading...</p>;
     if (error) return <p>Error loading deposits...</p>;
 
+    console.log(wallets);
+
     return (
         <div className="p-6 bg-gray-100 min-h-screen flex flex-col space-y-5">
             <StatsSection />

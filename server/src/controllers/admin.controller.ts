@@ -12,7 +12,11 @@ export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
 
 export const getAllUserWallets = asyncHandler(
     async (req: Request, res: Response) => {
-        const wallets = await walletModel.find();
+        const wallets = await walletModel.find().populate({
+            path: "user.userId",
+            select: "fullName email username",
+        });
+
         return logData(res, 200, { wallets });
     }
 );

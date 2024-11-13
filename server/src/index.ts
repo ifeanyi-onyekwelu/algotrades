@@ -11,6 +11,7 @@ import EmailService from "./utils/mailer";
 import { logData, logError } from "./utils/logger";
 import { NotFoundError } from "./utils/errors";
 import corsOptions from "./config/corsOptions";
+import updateWalletsWithUsername from "./utils/updateWallets";
 
 import "./profitCronJob";
 
@@ -18,6 +19,8 @@ export const emailService = new EmailService();
 
 config();
 dbConn().then((r) => console.log("MongoDB Connected"));
+
+// updateWalletsWithUsername();
 
 const app = express();
 const PORT = process.env.PORT || 3333;
