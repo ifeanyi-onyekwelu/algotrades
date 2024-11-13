@@ -20,7 +20,7 @@ export function AllUserWalletTable({ wallets }: any) {
                                 className="bg-white dark:border-gray-700 dark:bg-gray-800"
                             >
                                 <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                    {wallet.user?.fullName ?? "Unknown User"}
+                                    {wallet.user?.username ?? "Unknown User"}
                                 </Table.Cell>
                                 <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                                     {wallet.user?.email ?? "Unknown User"}
