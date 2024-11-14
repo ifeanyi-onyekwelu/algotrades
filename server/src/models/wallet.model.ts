@@ -5,6 +5,7 @@ export interface IWallet {
         userId: mongoose.Types.ObjectId;
         fullName: string;
         email: string;
+        username: string;
     };
     balance: number;
     profit: number;
@@ -22,6 +23,7 @@ const walletSchema = new mongoose.Schema<IWallet>(
                 required: true,
             },
             fullName: String,
+            username: String,
             email: String,
         },
         balance: {

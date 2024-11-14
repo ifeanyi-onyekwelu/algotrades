@@ -53,15 +53,23 @@ const RegisterForm = ({ refToken }: any) => {
 
     const handleOnSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (formState.password !== formState.confirmPassword) {
+
+        // Trim whitespace from username
+        const trimmedFormState = {
+            ...formState,
+            username: formState.username.trim(),
+        };
+
+        if (trimmedFormState.password !== trimmedFormState.confirmPassword) {
             setErrorMessage("Passwords do not match");
             setStatusType("error");
             setShowAlert(true);
             return;
         }
+
         try {
             const response = await register({
-                ...formState,
+                ...trimmedFormState,
                 referralToken: refToken,
             }).unwrap();
             const { accessToken } = response;
@@ -94,6 +102,7 @@ const RegisterForm = ({ refToken }: any) => {
     useEffect(() => {
         fullNameRef.current?.focus();
     }, []);
+
     return (
         <form onSubmit={handleOnSubmit}>
             <Grid container spacing={2}>
