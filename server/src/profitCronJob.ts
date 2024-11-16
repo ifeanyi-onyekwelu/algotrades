@@ -59,7 +59,7 @@ const calculateProfit = async () => {
     }
 };
 
-cron.schedule("* * * * *", () => {
+cron.schedule("* * * * *", async () => {
     console.log("Running profit calculation cron job every hour...");
     // calculateProfit();
 });
