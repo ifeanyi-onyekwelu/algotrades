@@ -12,6 +12,7 @@
     "author": "ifeanyi Onyekwelu",
     "license": "ISC",
     "dependencies": {
+        "agenda": "^5.0.0",
         "bcrypt": "^5.1.1",
         "cloudinary": "^2.5.0",
         "cookie-parser": "^1.4.6",
@@ -37,6 +38,7 @@
         "zod": "^3.23.8"
     },
     "devDependencies": {
+        "@types/agenda": "^4.1.4",
         "@types/bcrypt": "^5.0.2",
         "@types/cookie-parser": "^1.4.7",
         "@types/cors": "^2.8.17",

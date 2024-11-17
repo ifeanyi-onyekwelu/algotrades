@@ -1,7 +1,10 @@
-import cron from "node-cron";
+// import cron from "node-cron";
 import userModel from "./models/user.model";
 import planModel from "./models/plan.model";
 import walletModel from "./models/wallet.model";
+import Agenda from "agenda";
+
+const MONGO_DB_URI = process.env.LOCAL_DB_URI || "";
 
 const calculateProfit = async () => {
     try {
@@ -59,10 +62,30 @@ const calculateProfit = async () => {
     }
 };
 
-cron.schedule("* * * * *", async () => {
-    console.log("Running profit calculation cron job every hour...");
-    // calculateProfit();
+const agenda = new Agenda({
+    db: { address: MONGO_DB_URI },
 });
+
+agenda.define("calculate daily profit", async () => {
+    console.log("Job started: calculate daily profit");
+    try {
+        await calculateProfit();
+        console.log("Job completed successfully: calculate daily profit");
+    } catch (error) {
+        console.error("Job failed: calculate daily profit", error);
+    }
+});
+
+(async function () {
+    await agenda.start();
+    // Schedule the job to run every minute on weekdays (Monday to Friday)
+    await agenda.every("0 0 * * 1-5", "calculate daily profit");
+})();
+
+// cron.schedule("* * * * *", async () => {
+//     console.log("Running profit calculation cron job every hour...");
+//     // calculateProfit();
+// });
 
 // cron.schedule("0 0 * * 1-5", async () => {
 //     console.log("Running daily profit calculation cron job...");
