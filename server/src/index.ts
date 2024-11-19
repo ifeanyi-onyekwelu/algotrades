@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 3333;
 const sessionSecret =
     process.env.SESSION_SECRET || "dlwkdnkcwednacnweodj83842efnckd";
 
-console.log(new Date().toString());
+process.env.TZ = "Africa/Lagos";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

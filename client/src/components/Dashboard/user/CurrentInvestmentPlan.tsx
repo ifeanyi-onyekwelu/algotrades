@@ -50,7 +50,7 @@ const CurrentInvestmentPlan = ({ investmentPlan, profit }: any) => {
                                 <span className="ml-2 text-gray-600">
                                     {new Date(
                                         investmentPlan.investmentDate,
-                                    ).toLocaleDateString()}
+                                    ).toLocaleString()}
                                 </span>
                             </p>
                         )}
@@ -61,11 +61,11 @@ const CurrentInvestmentPlan = ({ investmentPlan, profit }: any) => {
                                 <span className="ml-2 text-gray-600">
                                     {new Date(
                                         investmentPlan.endDate,
-                                    ).toLocaleDateString()}
+                                    ).toLocaleString()}
                                 </span>
                             </p>
                         )}
-                        {investmentPlan.simulatedDays && (
+                        {investmentPlan.simulatedDays != 0 && (
                             <p className="flex items-center text-gray-700">
                                 <FaCalendarAlt className="text-blue-400 mr-2" />
                                 <span className="font-semibold">
@@ -83,7 +83,10 @@ const CurrentInvestmentPlan = ({ investmentPlan, profit }: any) => {
                                     Profit Accumulated:
                                 </span>
                                 <span className="ml-2 text-gray-600">
-                                    ${formatAmount(profit)}
+                                    $
+                                    {formatAmount(
+                                        investmentPlan.profitAccumulated,
+                                    )}
                                 </span>
                             </p>
                         )}

@@ -69,7 +69,7 @@ const agenda = new Agenda({
 agenda.define("calculate daily profit", async () => {
     console.log("Job started: calculate daily profit");
     try {
-        // await calculateProfit();
+        await calculateProfit();
         console.log("Job completed successfully: calculate daily profit");
     } catch (error) {
         console.error("Job failed: calculate daily profit", error);
@@ -79,5 +79,5 @@ agenda.define("calculate daily profit", async () => {
 (async function () {
     await agenda.start();
     // Schedule the job to run every minute on weekdays (Monday to Friday)
-    await agenda.every("* * * * 1-5", "calculate daily profit");
+    await agenda.every("50 23 * * 1-5", "calculate daily profit");
 })();

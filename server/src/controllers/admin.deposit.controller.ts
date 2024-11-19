@@ -7,6 +7,7 @@ import { NotFoundError } from "../utils/errors";
 import { getUserById } from "../services/user.service";
 import walletModel from "../models/wallet.model";
 import planModel from "../models/plan.model";
+import { addDays } from "date-fns";
 
 export const fetchAllDeposits = asyncHandler(
     async (req: Request, res: Response) => {
@@ -77,13 +78,18 @@ export const handleDeposit = asyncHandler(
         const user = await getUserById(deposit.user);
 
         const investmentPlan = await planModel.findOne({ _id: deposit.plan });
+        console.log(investmentPlan.duration);
 
         if (status === "approved") {
+            const daysToAdd = investmentPlan.duration; // Assuming duration is in days
+            const currentDate = new Date();
+            const endDate = addDays(currentDate, daysToAdd);
+
             user.currentPlan = {
                 planId: investmentPlan._id,
                 planName: investmentPlan.name,
-                investmentDate: new Date(),
-                endDate: new Date(Date.now() + investmentPlan.duration),
+                investmentDate: currentDate,
+                endDate: endDate,
                 initialInvestment: deposit.amount,
             };
             await user.save();
