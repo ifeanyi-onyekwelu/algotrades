@@ -33,15 +33,18 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Contact Info */}
                     <div className="border-r border-dashed pr-4 flex flex-col space-y-5">
-                        <img
-                            src={Logo}
-                            alt="Logo"
-                            className="w-full bg-white"
-                        />
+                        <h1 className="text-lg md:text-2xl text-white font-extrabold">
+                            ALGOTRADES LTD
+                        </h1>
                         <p className="text-white">
-                            Comprehensive financial advice and investment
-                            services that are tailored to meet your individual
-                            needs.
+                            Apartment 6 Paramount House, 168 Wardour Street,
+                            London, W1F 8ZX, England
+                        </p>
+                        <p className="text-white">
+                            <span className="font-semibold">
+                                Registration Number:
+                            </span>{" "}
+                            14607237
                         </p>
                         <Link
                             to="mailto:homyreal@demo.com"
