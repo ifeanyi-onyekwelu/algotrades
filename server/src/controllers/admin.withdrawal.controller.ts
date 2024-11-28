@@ -5,6 +5,7 @@ import asyncHandler from "express-async-handler";
 import { Request, Response } from "../utils/Types";
 import { NotFoundError } from "../utils/errors";
 import { getUserById } from "../services/user.service";
+import walletModel from "@/models/wallet.model";
 
 export const fetchAllWithdrawals = asyncHandler(
     async (req: Request, res: Response) => {
@@ -67,9 +68,20 @@ export const handleWithdrawal = asyncHandler(
             { $set: { status } },
             { new: status }
         );
-
         if (!withdrawal)
             return logError(res, new NotFoundError("Withdrawal not found"));
+
+        const userWallet = await walletModel.findOne({
+            "user.userId": withdrawal?.user,
+        });
+
+        if (!userWallet)
+            return logError(res, new NotFoundError("User wallet not found"));
+
+        if (status === "rejected") {
+            userWallet.balance += withdrawal.amount;
+            userWallet.save();
+        }
 
         const user = getUserById(withdrawal?.user);
 

@@ -11,6 +11,7 @@ import {
     generateRegistrationEmail,
     generatePasswordChangeNotification,
     generatePasswordResetEmail,
+    generateProfileUpdatedEmail,
 } from "./emailTemplates";
 
 const ADMIN_EMAIL = "Admin <admin@algotrades.io>"; // Replace with actual admin email
@@ -54,6 +55,15 @@ class EmailService {
     async sendLoginNotification(user: any) {
         const template = generateLoginEmail(user.fullName);
         await this.sendMail(user.email, "New Login Notification", template);
+    }
+    // User profile update notification
+    async sendProfileUpdatedNotification(user: any) {
+        const template = generateProfileUpdatedEmail(user.fullName);
+        await this.sendMail(
+            user.email,
+            "Profile Updated Notification",
+            template
+        );
     }
 
     // User registration confirmation
