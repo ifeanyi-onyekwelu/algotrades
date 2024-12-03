@@ -11,7 +11,7 @@ import {
     generateRegistrationEmail,
     generatePasswordChangeNotification,
     generatePasswordResetEmail,
-    generateProfileUpdatedEmail,
+    generateAdminProfileUpdateNotification,
 } from "./emailTemplates";
 
 const ADMIN_EMAIL = "Admin <admin@algotrades.io>"; // Replace with actual admin email
@@ -58,7 +58,7 @@ class EmailService {
     }
     // User profile update notification
     async sendProfileUpdatedNotification(user: any) {
-        const template = generateProfileUpdatedEmail(user.fullName);
+        const template = generateAdminProfileUpdateNotification(user.fullName);
         await this.sendMail(
             user.email,
             "Profile Updated Notification",
@@ -99,6 +99,11 @@ class EmailService {
             amount
         );
         await this.sendMail(ADMIN_EMAIL, "New Deposit Request", template);
+    }
+
+    async notifyAdminAboutProfileUpdate(user: any) {
+        const template = generateAdminProfileUpdateNotification(user.fullName);
+        await this.sendMail(ADMIN_EMAIL, "User Profile Updated", template);
     }
 
     // Withdrawal status update
