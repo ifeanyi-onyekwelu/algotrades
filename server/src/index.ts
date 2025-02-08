@@ -52,3 +52,5 @@ app.all("*", (req: express.Request, res: express.Response) => {
 });
 
 app.listen(PORT, () => console.log(`Listening on PORT ${PORT}`));
+
+export default app;

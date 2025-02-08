@@ -36,7 +36,7 @@ const ContactPage = () => {
                             <FaEnvelope className="w-12 h-12 rounded-full bg-secondary text-lightGrey p-3" />
                             <div className="flex flex-col">
                                 <h4 className="text-semibold">Email Us</h4>
-                                <p>support@algotrades.io</p>
+                                <p>sup.algotrades@gmail.com</p>
                             </div>
                         </div>
                     </div>
