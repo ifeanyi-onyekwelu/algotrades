@@ -45,12 +45,6 @@ const Footer = () => {
                             </span>{" "}
                             14607237
                         </p>
-                        <Link
-                            to="mailto:homyreal@demo.com"
-                            className="block mt-2 text-gray-200 hover:text-white"
-                        >
-                            admin@algotrades.io
-                        </Link>
                     </div>
 
                     {/* Links Section */}
