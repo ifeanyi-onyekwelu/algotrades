@@ -2,9 +2,8 @@ import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query/react";
 import { setCredentials } from "../../features/auth/slices/authSlice";
 
 const baseQuery = fetchBaseQuery({
-    // baseUrl: "https://api.algotrades.io/api/v1/",
     // baseUrl: "http://localhost:3333/api/v1/",
-    baseUrl: "https://algotrades-2.onrender.com/api/v1",
+    baseUrl: "https://algotrades-luyi.onrender.com/api/v1/",
     credentials: "include",
     prepareHeaders: (headers, _: any) => {
         const token = localStorage.getItem("token");
