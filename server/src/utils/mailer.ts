@@ -14,7 +14,7 @@ import {
     generateAdminProfileUpdateNotification,
 } from "./emailTemplates";
 
-const ADMIN_EMAIL = "Support <support@algotrades.io>"; // Replace with actual admin email
+const ADMIN_EMAIL = "Admin <admin@algotrades.io>"; // Replace with actual admin email
 
 class EmailService {
     transporter: nodemailer.Transporter;
@@ -26,7 +26,7 @@ class EmailService {
             port: 465,
             secure: true,
             auth: {
-                user: "support@algotrades.io",
+                user: "admin@algotrades.io",
                 pass: "Pass1@algotrades.io",
             },
         });
