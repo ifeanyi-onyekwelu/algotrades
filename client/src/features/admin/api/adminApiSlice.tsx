@@ -24,6 +24,23 @@ const adminApiSlice = baseApi.injectEndpoints({
         getTotalUsers: builder.query({
             query: () => "admin/total-users",
         }),
+        // Add the new endpoints below
+        suspendUserAccount: builder.mutation({
+            query: ({ userId, reason }) => ({
+                url: `admin/users/${userId}/suspend`,
+                method: "PUT",
+                body: { reason },
+            }),
+        }),
+        activateUserAccount: builder.mutation({
+            query: ({ userId }) => ({
+                url: `admin/users/${userId}/activate`,
+                method: "PUT",
+            }),
+        }),
+        getUserSuspensionStatus: builder.query({
+            query: (userId) => `admin/users/${userId}/suspension-status`,
+        }),
 
         // Deposits
         getTotalDeposit: builder.query({
@@ -77,14 +94,12 @@ const adminApiSlice = baseApi.injectEndpoints({
         getAllPlans: builder.query({
             query: () => "admin/plans/all",
         }),
-
         adminProfile: builder.query({
             query: () => ({
                 url: `/user/profile`,
                 method: "GET",
             }),
         }),
-
         registerAdmin: builder.mutation({
             query: (adminData) => ({
                 url: `/auth/admin-register`,
@@ -102,6 +117,9 @@ export const {
     useUpdateUserProfitMutation,
     useDeleteUserMutation,
     useGetTotalUsersQuery,
+    useSuspendUserAccountMutation,
+    useActivateUserAccountMutation,
+    useGetUserSuspensionStatusQuery,
 
     useGetTotalDepositQuery,
     useGetAllDepositsQuery,

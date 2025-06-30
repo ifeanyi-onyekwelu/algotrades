@@ -9,6 +9,9 @@ import {
     getTotalNumberOfUsers,
     deleteUserByUserId,
     getAllUserWallets,
+    suspendUserAccount,
+    activateUserAccount,
+    getUserSuspensionStatus
 } from "../controllers/admin.controller";
 
 import {
@@ -43,6 +46,9 @@ router.get("/wallets", getAllUserWallets);
 router.put("/update-profit/:username", updateUserProfit);
 router.get("/total-users", getTotalNumberOfUsers);
 router.delete("/users/:userId", deleteUserByUserId);
+router.put("/users/:userId/suspend", suspendUserAccount);
+router.put("/users/:userId/activate", activateUserAccount);
+router.get("/users/:userId/suspension-status", getUserSuspensionStatus);
 
 router.get("/plans/all", getAllPlans);
 router.post("/plans", createPlan);

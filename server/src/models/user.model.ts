@@ -28,11 +28,16 @@ interface IUser {
     refreshToken: string | null;
     passwordResetToken: string | null;
     emailVerificationToken: number | null;
+    isSuspended: boolean;
+    suspensionReason?: string;
+    suspendedAt?: Date
+
     passportNumber: string | null;
     contactAddress: string | null;
     isVerified: boolean;
     referralCode: string | null;
     referralLink: string | null;
+
     createdAt: Date;
     role: string;
     profilePicture: string;
@@ -80,6 +85,9 @@ const userSchema = new mongoose.Schema<IUser>(
         passportNumber: { type: String, default: null },
         contactAddress: { type: String, default: null },
         emailVerificationToken: { type: Number, default: null },
+        isSuspended: { type: Boolean, default: false },
+        suspensionReason: { type: String },
+        suspendedAt: { type: Date },
         isVerified: { type: Boolean, default: false },
         referralLink: { type: String },
         referralCode: { type: String },

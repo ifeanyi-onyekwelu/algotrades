@@ -28,6 +28,80 @@ export const getTotalNumberOfUsers = asyncHandler(
     }
 );
 
+export const suspendUserAccount = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { userId } = req.params;
+        const { reason } = req.body;
+
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return logError(res, new NotFoundError("User not found"));
+        }
+
+        user.isSuspended = true;
+        user.suspensionReason = reason;
+        user.suspendedAt = new Date();
+
+        await user.save();
+
+        return logData(res, 200, {
+            message: "User account suspended successfully",
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                isSuspended: user.isSuspended,
+                suspensionReason: user.suspensionReason,
+                suspendedAt: user.suspendedAt
+            }
+        });
+    }
+);
+
+export const activateUserAccount = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { userId } = req.params;
+
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return logError(res, new NotFoundError("User not found"));
+        }
+
+        user.isSuspended = false;
+        user.suspensionReason = undefined;
+        user.suspendedAt = undefined;
+
+        await user.save();
+
+        return logData(res, 200, {
+            message: "User account activated successfully",
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                isSuspended: user.isSuspended
+            }
+        });
+    }
+);
+
+export const getUserSuspensionStatus = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { userId } = req.params;
+
+        const user = await userModel.findById(userId,
+            'username email isSuspended suspensionReason suspendedAt');
+
+        if (!user) {
+            return logError(res, new NotFoundError("User not found"));
+        }
+
+        return logData(res, 200, {
+            user
+        });
+    }
+);
+
 export const deleteUserByUserId = asyncHandler(
     async (req: Request, res: Response) => {
         const userId = req.params.userId;

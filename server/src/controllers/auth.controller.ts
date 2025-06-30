@@ -176,6 +176,14 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     if (!foundUser)
         return logError(res, new NotFoundError("Account not found"));
 
+    // Check if account is suspended
+    if (foundUser.isSuspended) {
+        return logError(res, new BadRequestError(
+            "Your account has been suspended. " +
+            (foundUser.suspensionReason ? `Reason: ${foundUser.suspensionReason}` : "")
+        ));
+    }
+
     if (!(await bcrypt.compare(data.password, foundUser?.password)))
         return logError(res, new NotFoundError("Account not found"));
 
@@ -194,7 +202,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
         role: foundUser.role,
         isVerified: foundUser.isVerified,
     });
-    foundUser.lastLogin = new Date().toUTCString(); // Returns the full date in a readable UTC format (e.g., "Mon, 23 Sep 2024 12:34:56 GMT")
+    foundUser.lastLogin = new Date().toUTCString();
     foundUser.refreshToken = refreshToken;
     await foundUser.save();
 
