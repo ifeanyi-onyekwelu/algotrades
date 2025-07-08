@@ -51,9 +51,6 @@ export function Component({ isOpen, setIsOpen }: any) {
             setAmount("");
             setOperationType("add");
             setUpdateField("profit");
-            setTimeout(() => {
-                location.reload();
-            }, 1000);
         } catch (error: any) {
             setErrorMessage(error);
             setStatusType("error");
